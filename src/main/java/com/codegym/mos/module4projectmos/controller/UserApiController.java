@@ -16,18 +16,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api")
 public class UserApiController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(value = "/register",
+    @PostMapping(value = "api/register",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Void> apiCreateBlog(@Validated @RequestBody User user,
-                                              BindingResult bindingResult,
-                                              UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<Void> apiRegister(@Validated @RequestBody User user,
+                                            BindingResult bindingResult,
+                                            UriComponentsBuilder ucBuilder) {
         if (bindingResult.hasGlobalErrors() || bindingResult.hasFieldErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
