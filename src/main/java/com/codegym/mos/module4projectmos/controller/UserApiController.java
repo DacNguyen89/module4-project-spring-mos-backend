@@ -1,17 +1,41 @@
 package com.codegym.mos.module4projectmos.controller;
 
+import com.codegym.mos.module4projectmos.model.User;
+import com.codegym.mos.module4projectmos.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/user")
 public class UserApiController {
-    @GetMapping
-    public ModelAndView user() {
-        ModelAndView modelAndView = new ModelAndView("index");
-        return modelAndView;
+    @Autowired
+    private UserService userService;
+
+    @PostMapping(value = "api/create",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Void> apiCreateBlog(@Validated @RequestBody User user,
+                                              BindingResult bindingResult,
+                                              UriComponentsBuilder ucBuilder) {
+        if (bindingResult.hasGlobalErrors() || bindingResult.hasFieldErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        userService.save(user);
+
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Void> responseEntity = new ResponseEntity<>(headers, HttpStatus.CREATED);
+        return responseEntity;
     }
 }
