@@ -16,12 +16,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/user")
+@RequestMapping("/api")
 public class UserApiController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(value = "api/create",
+    @PostMapping(value = "/register",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
