@@ -6,4 +6,8 @@ import java.io.Serializable;
 
 public abstract class AbstractEntityServiceImplWithSpringData<E, I extends Serializable> {
     protected abstract CrudRepository<E, I> repository();
+
+    public E save(E E) {
+        return repository().save(E);
+    }
 }
