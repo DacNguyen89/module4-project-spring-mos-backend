@@ -15,6 +15,10 @@ public abstract class AbstractEntityServiceImplWithSpringData<E, I extends Seria
         return repository().save(E);
     }
 
+    public E findOne(I id) {
+        return repository().findById(id).orElse(null);
+    }
+
     public List<E> findAll() {
         return streamAll().collect(Collectors.toList());
     }
