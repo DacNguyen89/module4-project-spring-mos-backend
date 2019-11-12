@@ -1,26 +1,22 @@
 package com.codegym.mos.module4projectmos.model;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "user")
+@Table(name = "User")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique = true, nullable = false, name = "username")
-    private String userName;
-
-    @NotBlank
+    private String username;
     private String password;
 
     public User() {
     }
 
-    public User(String userName, @NotBlank String password) {
-        this.userName = userName;
+    public User(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 
@@ -32,12 +28,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -47,7 +43,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
 }
 
 
