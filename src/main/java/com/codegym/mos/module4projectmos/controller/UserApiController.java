@@ -37,4 +37,12 @@ public class UserApiController {
         ResponseEntity<Void> responseEntity = new ResponseEntity<>(headers, HttpStatus.CREATED);
         return responseEntity;
     }
+
+    @GetMapping(value = "/api/user", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Iterable<User>> apiList() {
+        Iterable<User> users = userService.findAll();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
 }
