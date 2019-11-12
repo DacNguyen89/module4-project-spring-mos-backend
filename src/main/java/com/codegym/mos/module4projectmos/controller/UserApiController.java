@@ -20,6 +20,16 @@ public class UserApiController {
     @Autowired
     private UserService userService;
 
+    @GetMapping(value = "/api/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<User> getNational(@PathVariable Long id) {
+        User user = userService.findOne(id);
+        if (user == null) {
+            return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<User>(user, HttpStatus.OK);
+    }
+
     @PostMapping(value = "api/register",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
