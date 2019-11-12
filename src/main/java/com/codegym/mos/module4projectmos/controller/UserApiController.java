@@ -55,4 +55,20 @@ public class UserApiController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @PutMapping(value = "/api/edit-profile/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> updateNational(@PathVariable("id") Long id,
+                                               @RequestBody User user) {
+        User originUser = userService.findOne(id);
+
+        if (originUser == null) {
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+        }
+        originUser.setUsername(user.getUsername());
+        originUser.setPassword(user.getPassword());
+        userService.save(originUser);
+        return new ResponseEntity<User>(originUser, HttpStatus.OK);
+    }
+
 }
