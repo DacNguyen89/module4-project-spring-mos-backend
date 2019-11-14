@@ -10,6 +10,7 @@ import com.codegym.mos.module4projectmos.repository.RoleRepository;
 import com.codegym.mos.module4projectmos.service.UserService;
 import com.codegym.mos.module4projectmos.service.impl.FormConvertService;
 import com.codegym.mos.module4projectmos.service.impl.JwtTokenProvider;
+import com.codegym.mos.module4projectmos.service.impl.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,9 @@ public class UserApiController {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private UserDetailServiceImpl userDetailService;
 
     /*@GetMapping(value = "/api/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -125,5 +129,26 @@ public class UserApiController {
         user.setRoles(roles);
         userService.save(user);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/profile")
+    public ResponseEntity<User> getCurrentUser() {
+        User user = userDetailService.getCurrentUser();
+        if (user != null) {
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/profile")
+    public ResponseEntity<Void> updateProfile(@RequestBody User user) {
+        User oldUser = userDetailService.getCurrentUser();
+        if (user != null) {
+            userService.setFieldsEdit(oldUser, user);
+            userService.save(oldUser);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
