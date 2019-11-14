@@ -1,9 +1,14 @@
 package com.codegym.mos.module4projectmos.controller;
 
+import com.codegym.mos.module4projectmos.model.entity.Role;
+import com.codegym.mos.module4projectmos.model.entity.User;
+import com.codegym.mos.module4projectmos.model.form.UserForm;
 import com.codegym.mos.module4projectmos.model.util.CustomUserDetails;
 import com.codegym.mos.module4projectmos.model.util.LoginRequest;
 import com.codegym.mos.module4projectmos.model.util.LoginResponse;
+import com.codegym.mos.module4projectmos.repository.RoleRepository;
 import com.codegym.mos.module4projectmos.service.UserService;
+import com.codegym.mos.module4projectmos.service.impl.FormConvertService;
 import com.codegym.mos.module4projectmos.service.impl.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @CrossOrigin("*")
@@ -30,6 +37,12 @@ public class UserApiController {
 
     @Autowired
     private JwtTokenProvider tokenProvider;
+
+    @Autowired
+    FormConvertService formConvertService;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     /*@GetMapping(value = "/api/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -99,5 +112,18 @@ public class UserApiController {
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
         LoginResponse loginResponse = new LoginResponse(jwt);
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAnonymous()")
+    @PostMapping(value = "/register")
+    public ResponseEntity<Void> createUser(@Valid @RequestBody UserForm userForm) {
+        User user = formConvertService.convertToUser(userForm, true);
+        if (user == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Role role = roleRepository.findByName(DEFAULT_ROLE);
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        user.setRoles(roles);
+        userService.save(user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
