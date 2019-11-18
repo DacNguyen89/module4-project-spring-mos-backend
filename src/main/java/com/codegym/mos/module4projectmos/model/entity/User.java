@@ -17,7 +17,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "lambda_user")
-//@Proxy(lazy=false)
 @Data
 @EqualsAndHashCode()
 @NoArgsConstructor
@@ -74,7 +73,7 @@ public class User {
     )
     private Collection<Role> roles;
     private String avatarUrl;
-    private String avatarBlobString;
+
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -85,6 +84,7 @@ public class User {
                     name = "song_id", referencedColumnName = "id"))
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<Song> favoriteSongs;
+
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -95,6 +95,8 @@ public class User {
                     name = "album_id", referencedColumnName = "id"))
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<Album> favoriteAlbums;
+    private String avatarBlobString;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Collection<Comment> comments;

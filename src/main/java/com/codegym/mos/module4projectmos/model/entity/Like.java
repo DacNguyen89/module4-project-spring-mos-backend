@@ -21,8 +21,6 @@ public class Like {
     public Like() {
     }
 
-    ;
-
     public Like(Long songId, Long userId) {
         this.songId = songId;
         this.userId = userId;
