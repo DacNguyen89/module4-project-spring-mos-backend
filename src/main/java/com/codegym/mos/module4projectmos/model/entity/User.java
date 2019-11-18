@@ -1,5 +1,7 @@
 package com.codegym.mos.module4projectmos.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,11 +16,13 @@ import java.util.Collection;
 import java.util.Date;
 
 @Entity
-@Table(name = "user")
+@Table(name = "lambda_user")
+//@Proxy(lazy=false)
 @Data
 @EqualsAndHashCode()
 @NoArgsConstructor
-@JsonIgnoreProperties(value = {"enabled", "accountNonExpired", "accountNonLocked", "credentialsNonExpired"}, allowGetters = true, ignoreUnknown = true)
+@JsonIgnoreProperties(value = {"avatarBlobString"
+        , "enabled", "accountNonExpired", "accountNonLocked", "credentialsNonExpired"}, allowGetters = true, ignoreUnknown = true)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -53,6 +57,14 @@ public class User {
     @Email
     private String email;
 
+    @JsonBackReference("user-playlist")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @Fetch(value = FetchMode.SUBSELECT)
+    Collection<Playlist> playlists;
+    @JsonBackReference(value = "user-uploadedSong")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "uploader")
+    Collection<Song> uploadedSong;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(
@@ -61,6 +73,31 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Collection<Role> roles;
+    private String avatarUrl;
+    private String avatarBlobString;
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_favorite_songs",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "song_id", referencedColumnName = "id"))
+    @Fetch(value = FetchMode.SUBSELECT)
+    private Collection<Song> favoriteSongs;
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_favorite_albums",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "album_id", referencedColumnName = "id"))
+    @Fetch(value = FetchMode.SUBSELECT)
+    private Collection<Album> favoriteAlbums;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Collection<Comment> comments;
 
     private boolean enabled = true;
     private boolean accountNonExpired = true;

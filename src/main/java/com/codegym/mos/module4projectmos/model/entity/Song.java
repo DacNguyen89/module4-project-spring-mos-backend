@@ -1,16 +1,19 @@
 package com.codegym.mos.module4projectmos.model.entity;
 
 import com.codegym.mos.module4projectmos.model.util.MediaObject;
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.*;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Date;
@@ -122,3 +125,4 @@ public class Song extends MediaObject {
                 '}';
     }
 }
+

@@ -1,5 +1,6 @@
 package com.codegym.mos.module4projectmos.model.util;
 
+import com.codegym.mos.module4projectmos.model.entity.*;
 import lombok.Data;
 
 import java.util.Collection;
