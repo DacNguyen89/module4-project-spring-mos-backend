@@ -29,7 +29,7 @@ public class Song extends MediaObject {
     private Long id;
 
     @NotBlank
-    private String title;
+    private String name;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;
@@ -110,8 +110,8 @@ public class Song extends MediaObject {
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
-    public Song(String title, Date releaseDate) {
-        this.title = title;
+    public Song(String name, Date releaseDate) {
+        this.name = name;
         this.releaseDate = releaseDate;
     }
 
@@ -119,7 +119,7 @@ public class Song extends MediaObject {
     public String toString() {
         return "Song{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", name='" + name + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", url='" + url + '\'' +
                 '}';

@@ -22,7 +22,7 @@ public class Playlist {
 
     //    @Column(columnDefinition = "VARCHAR(255) COLLATE utf8mb4_bin")
     @NotBlank
-    private String title;
+    private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")

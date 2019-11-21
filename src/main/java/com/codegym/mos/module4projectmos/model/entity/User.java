@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Date;
 
 @Entity
-@Table(name = "lambda_user")
+@Table(name = "user")
 @Data
 @EqualsAndHashCode()
 @NoArgsConstructor

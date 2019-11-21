@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 public abstract class MediaObject {
 
-    private String title;
+    private String name;
 
     private Date releaseDate;
 
