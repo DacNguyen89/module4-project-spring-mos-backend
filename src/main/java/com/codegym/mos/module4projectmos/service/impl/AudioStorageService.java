@@ -76,8 +76,7 @@ public class AudioStorageService implements StorageService<Song> {
         // Normalize file name
         String fileName = StringUtils.cleanPath(song.getId().toString().concat(" - ").concat(song.getName()).concat(artistsString).concat(".").concat(extension));
         try {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream("/media/scopex/SSD/musikonthesea-firebase-adminsdk-menby-5fd17288f9.json"))
-                    .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+            GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(credentials)
                     .setDatabaseUrl("https://musikonthesea.firebaseio.com")
@@ -101,6 +100,7 @@ public class AudioStorageService implements StorageService<Song> {
         }
     }
 
+    // ham nay co phai de dung voi firebase dau???? copy nham roi anh oi
     @Override
     public Resource loadFileAsResource(String fileName) {
         try {
