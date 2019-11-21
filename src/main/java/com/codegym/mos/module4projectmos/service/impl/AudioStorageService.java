@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class AudioStorageService implements StorageService<Song> {
@@ -91,7 +92,7 @@ public class AudioStorageService implements StorageService<Song> {
 
             Bucket bucket = storageClient.bucket();
 
-            Blob blob = bucket.create(blobString, testFile, Bucket.BlobWriteOption.userProject("climax-sound"));
+            Blob blob = bucket.create(blobString, testFile, Bucket.BlobWriteOption.userProject("musikonthesea"));
             bucket.getStorage().updateAcl(blob.getBlobId(), Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
 
             return blob.getMediaLink();
@@ -103,19 +104,27 @@ public class AudioStorageService implements StorageService<Song> {
     @Override
     public Resource loadFileAsResource(String fileName) {
         try {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(""))
-                    .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+//            GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(""))
+//                    .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+            GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(credentials)
                     .setDatabaseUrl("https://musikonthesea.firebaseio.com")
                     .setStorageBucket("musikonthesea.appspot.com")
                     .build();
 
-            FirebaseApp fireApp = FirebaseApp.initializeApp(options);
+            FirebaseApp fireApp = null;
+            List<FirebaseApp> firebaseApps = FirebaseApp.getApps();
+            if (firebaseApps != null && !firebaseApps.isEmpty()) {
+                for (FirebaseApp app : firebaseApps) {
+                    if (app.getName().equals(FirebaseApp.DEFAULT_APP_NAME))
+                        fireApp = app;
+                }
+            } else fireApp = FirebaseApp.initializeApp(options);
 
             StorageClient storageClient = StorageClient.getInstance(fireApp);
             String blobString = "audio/" + fileName;
-            return new ByteArrayResource(storageClient.bucket().get(blobString, Storage.BlobGetOption.userProject("climax-sound")).getContent());
+            return new ByteArrayResource(storageClient.bucket().get(blobString, Storage.BlobGetOption.userProject("musikonthesea")).getContent());
         } catch (IOException ex) {
             throw new FileNotFoundException("File not found " + fileName, ex);
         }

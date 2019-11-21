@@ -32,6 +32,7 @@ public class SongApiController {
         for (Artist artist : artists) {
             artistService.save(artist);
         }
+        songService.save(song);
         String fileDownloadUri = audioStorageService.storeFile(multipartFile, song);
         song.setUrl(fileDownloadUri);
         songService.save(song);
