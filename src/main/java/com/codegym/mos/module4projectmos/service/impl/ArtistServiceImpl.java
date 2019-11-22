@@ -6,6 +6,8 @@ import com.codegym.mos.module4projectmos.service.ArtistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+
 @Service
 public class ArtistServiceImpl implements ArtistService {
     @Autowired
@@ -19,5 +21,16 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     public void save(Artist artist) {
         artistRepository.saveAndFlush(artist);
+    }
+
+    public String convertToString(Collection<Artist> artists) {
+        String artistsString = "";
+        if (!artists.isEmpty()) {
+            artistsString = " - ";
+            for (Artist artist : artists) {
+                artistsString = artistsString.concat(artist.getName()).concat("_");
+            }
+        }
+        return artistsString;
     }
 }
