@@ -8,11 +8,9 @@ import com.codegym.mos.module4projectmos.model.util.LoginRequest;
 import com.codegym.mos.module4projectmos.model.util.LoginResponse;
 import com.codegym.mos.module4projectmos.repository.RoleRepository;
 import com.codegym.mos.module4projectmos.service.UserService;
-import com.codegym.mos.module4projectmos.service.impl.AvatarStorageService;
-import com.codegym.mos.module4projectmos.service.impl.FormConvertService;
-import com.codegym.mos.module4projectmos.service.impl.JwtTokenProvider;
-import com.codegym.mos.module4projectmos.service.impl.UserDetailServiceImpl;
+import com.codegym.mos.module4projectmos.service.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Optional;
@@ -54,6 +53,9 @@ public class UserApiController {
 
     @Autowired
     private AvatarStorageService avatarStorageService;
+
+    @Autowired
+    private DownloadService downloadService;
 
     /*@GetMapping(value = "/api/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -172,5 +174,10 @@ public class UserApiController {
             userService.save(user.get());
             return new ResponseEntity<>("User's avatar uploaded successfully", HttpStatus.OK);
         } else return new ResponseEntity<>("Not found user with the given id in database!", HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/avatar/{fileName:.+}")
+    public ResponseEntity<Resource> getAvatar(@PathVariable("fileName") String fileName, HttpServletRequest request) {
+        return downloadService.generateUrl(fileName, request, avatarStorageService);
     }
 }
