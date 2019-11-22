@@ -8,6 +8,7 @@ import com.codegym.mos.module4projectmos.model.util.LoginRequest;
 import com.codegym.mos.module4projectmos.model.util.LoginResponse;
 import com.codegym.mos.module4projectmos.repository.RoleRepository;
 import com.codegym.mos.module4projectmos.service.UserService;
+import com.codegym.mos.module4projectmos.service.impl.AvatarStorageService;
 import com.codegym.mos.module4projectmos.service.impl.FormConvertService;
 import com.codegym.mos.module4projectmos.service.impl.JwtTokenProvider;
 import com.codegym.mos.module4projectmos.service.impl.UserDetailServiceImpl;
@@ -20,9 +21,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -47,6 +51,9 @@ public class UserApiController {
 
     @Autowired
     private UserDetailServiceImpl userDetailService;
+
+    @Autowired
+    private AvatarStorageService avatarStorageService;
 
     /*@GetMapping(value = "/api/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -150,5 +157,20 @@ public class UserApiController {
             userService.save(oldUser);
             return new ResponseEntity<>(HttpStatus.OK);
         } else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/avatar")
+    public ResponseEntity<String> uploadAvatar(@RequestPart("avatar") MultipartFile avatar, @RequestPart("id") String id) {
+        Optional<User> user = userService.findById(Long.parseLong(id));
+        if (user.isPresent()) {
+            String fileName = avatarStorageService.storeFile(avatar, user.get());
+            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/api/avatar/")
+                    .path(fileName)
+                    .toUriString();
+            user.get().setAvatarUrl(fileDownloadUri);
+            userService.save(user.get());
+            return new ResponseEntity<>("User's avatar uploaded successfully", HttpStatus.OK);
+        } else return new ResponseEntity<>("Not found user with the given id in database!", HttpStatus.NOT_FOUND);
     }
 }
