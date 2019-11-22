@@ -5,12 +5,15 @@ import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.service.ArtistService;
 import com.codegym.mos.module4projectmos.service.SongService;
 import com.codegym.mos.module4projectmos.service.impl.AudioStorageService;
+import com.codegym.mos.module4projectmos.service.impl.DownloadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
 @CrossOrigin("*")
@@ -26,6 +29,9 @@ public class SongApiController {
     @Autowired
     private AudioStorageService audioStorageService;
 
+    @Autowired
+    private DownloadService downloadService;
+
     @PostMapping("/upload")
     public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile multipartFile) {
         Collection<Artist> artists = song.getArtists();
@@ -37,5 +43,10 @@ public class SongApiController {
         song.setUrl(fileDownloadUri);
         songService.save(song);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/download/{fileName:.+}")
+    public ResponseEntity<Resource> downloadAudio(@PathVariable String fileName, HttpServletRequest request) {
+        return downloadService.generateUrl(fileName, request, audioStorageService);
     }
 }
