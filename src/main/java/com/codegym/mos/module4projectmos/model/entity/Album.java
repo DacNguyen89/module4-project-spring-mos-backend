@@ -16,7 +16,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@JsonIgnoreProperties(value = {"users", "coverBlobString", "coverUrl"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"users", "coverBlobString", "coverUrl", "coverBlobId"}, allowGetters = true)
 public class Album extends MediaObject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

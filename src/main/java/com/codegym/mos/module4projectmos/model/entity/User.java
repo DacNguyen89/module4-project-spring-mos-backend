@@ -21,7 +21,7 @@ import java.util.Date;
 @EqualsAndHashCode()
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"avatarBlobString"
-        , "enabled", "accountNonExpired", "accountNonLocked", "credentialsNonExpired"}, allowGetters = true, ignoreUnknown = true)
+        , "enabled", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "avatarBlobString"}, allowGetters = true, ignoreUnknown = true)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -55,6 +55,8 @@ public class User {
 
     @Email
     private String email;
+
+    private String avatarBlobString;
 
     @JsonBackReference("user-playlist")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
@@ -95,7 +97,6 @@ public class User {
                     name = "album_id", referencedColumnName = "id"))
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<Album> favoriteAlbums;
-    private String avatarBlobString;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
