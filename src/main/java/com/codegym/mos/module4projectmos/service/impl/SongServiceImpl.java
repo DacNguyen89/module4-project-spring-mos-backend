@@ -31,6 +31,11 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    public Page<Song> findAllByUploader_Id(Long id, Pageable pageable) {
+        return songRepository.findAllByUploader_Id(id, pageable);
+    }
+
+    @Override
     public Song save(Song song) {
         return songRepository.saveAndFlush(song);
     }
