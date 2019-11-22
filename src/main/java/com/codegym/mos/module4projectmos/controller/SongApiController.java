@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Optional;
 
 @CrossOrigin("*")
 @RestController
@@ -77,5 +78,11 @@ public class SongApiController {
         if (isEmpty) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else return new ResponseEntity<>(userSongList, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/detail")
+    public ResponseEntity<Song> songDetail(@RequestParam Long id) {
+        Optional<Song> song = songService.findById(id);
+        return song.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
