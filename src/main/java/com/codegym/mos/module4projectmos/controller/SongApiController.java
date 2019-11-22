@@ -42,14 +42,27 @@ public class SongApiController {
     @Autowired
     UserDetailServiceImpl userDetailService;
 
-    @PostMapping("/upload")
+/*    @PostMapping("/upload")
     public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile multipartFile) {
         Collection<Artist> artists = song.getArtists();
         for (Artist artist : artists) {
             artistService.save(artist);
         }
         songService.save(song);
-        String fileDownloadUri = audioStorageService.storeFile(multipartFile, song);
+        String fileDownloadUri = audioStorageService.saveToFirebaseStorage(multipartFile, song);
+        song.setUrl(fileDownloadUri);
+        song.setUploader(userDetailService.getCurrentUser());
+        songService.save(song);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }*/
+
+    @PostMapping("/upload")
+    public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file) {
+        Collection<Artist> artists = song.getArtists();
+        for (Artist artist : artists) {
+            artistService.save(artist);
+        }
+        String fileDownloadUri = audioStorageService.saveToFirebaseStorage(song, file);
         song.setUrl(fileDownloadUri);
         song.setUploader(userDetailService.getCurrentUser());
         songService.save(song);
