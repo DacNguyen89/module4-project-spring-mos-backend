@@ -20,4 +20,6 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     @Query(value = "SELECT * FROM song WHERE BINARY name=:name", nativeQuery = true)
     Optional<Song> findByName(@Param("name") String name);
+
+    Page<Song> findAllByUploader_Id(Long id, Pageable pageable);
 }
