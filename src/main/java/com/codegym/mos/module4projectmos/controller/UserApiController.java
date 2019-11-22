@@ -20,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -161,7 +160,7 @@ public class UserApiController {
         } else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/avatar")
+    /*@PostMapping("/avatar")
     public ResponseEntity<String> uploadAvatar(@RequestPart("avatar") MultipartFile avatar, @RequestPart("id") String id) {
         Optional<User> user = userService.findById(Long.parseLong(id));
         if (user.isPresent()) {
@@ -174,7 +173,33 @@ public class UserApiController {
             userService.save(user.get());
             return new ResponseEntity<>("User's avatar uploaded successfully", HttpStatus.OK);
         } else return new ResponseEntity<>("Not found user with the given id in database!", HttpStatus.NOT_FOUND);
+    }*/
+
+    @PostMapping("/avatar")
+    public ResponseEntity<String> uploadAvatar(@RequestPart("avatar") MultipartFile avatar, @RequestPart("id") String id) {
+        Optional<User> user = userService.findById(Long.parseLong(id));
+        if (user.isPresent()) {
+            String fileDownloadUri = avatarStorageService.saveToFirebaseStorage(user.get(), avatar);
+            user.get().setAvatarUrl(fileDownloadUri);
+            userService.save(user.get());
+            return new ResponseEntity<>("User's avatar uploaded successfully", HttpStatus.OK);
+        } else return new ResponseEntity<>("Not found user with the given id in database!", HttpStatus.NOT_FOUND);
     }
+
+    /*@PutMapping("/profile")
+    public ResponseEntity<Void> updateProfile(@RequestPart("user") User user , @RequestPart(value = "avatar",required = false) MultipartFile multipartFile, @RequestParam("id") Long id) {
+        Optional<User> oldUser = userService.findById(id);
+        if(oldUser.isPresent()) {
+            if (multipartFile != null) {
+                String fileDownloadUri = avatarStorageService.saveToFirebaseStorage(oldUser.get(),multipartFile);
+                user.setAvatarUrl(fileDownloadUri);
+            }
+            userService.setFieldsEdit(oldUser.get(),user);
+            userService.save(oldUser.get());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }*/
 
     @GetMapping("/avatar/{fileName:.+}")
     public ResponseEntity<Resource> getAvatar(@PathVariable("fileName") String fileName, HttpServletRequest request) {
