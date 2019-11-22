@@ -8,6 +8,8 @@ import com.codegym.mos.module4projectmos.service.impl.AudioStorageService;
 import com.codegym.mos.module4projectmos.service.impl.DownloadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +50,13 @@ public class SongApiController {
     @GetMapping("/download/{fileName:.+}")
     public ResponseEntity<Resource> downloadAudio(@PathVariable String fileName, HttpServletRequest request) {
         return downloadService.generateUrl(fileName, request, audioStorageService);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<Page<Song>> songList(Pageable pageable) {
+        Page<Song> songList = songService.findAll(pageable);
+        if (songList.getTotalElements() == 0) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else return new ResponseEntity<>(songList, HttpStatus.OK);
     }
 }
