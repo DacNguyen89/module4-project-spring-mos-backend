@@ -2,16 +2,20 @@ package com.codegym.mos.module4projectmos.controller;
 
 import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.Song;
+import com.codegym.mos.module4projectmos.model.entity.User;
 import com.codegym.mos.module4projectmos.service.ArtistService;
 import com.codegym.mos.module4projectmos.service.SongService;
 import com.codegym.mos.module4projectmos.service.impl.AudioStorageService;
 import com.codegym.mos.module4projectmos.service.impl.DownloadService;
+import com.codegym.mos.module4projectmos.service.impl.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +37,9 @@ public class SongApiController {
 
     @Autowired
     private DownloadService downloadService;
+
+    @Autowired
+    UserDetailServiceImpl userDetailService;
 
     @PostMapping("/upload")
     public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile multipartFile) {
@@ -58,5 +65,16 @@ public class SongApiController {
         if (songList.getTotalElements() == 0) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else return new ResponseEntity<>(songList, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/uploaded/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<Song>> userSongList(Pageable pageable) {
+        User currentUser = userDetailService.getCurrentUser();
+        Page<Song> userSongList = songService.findAllByUploader_Id(currentUser.getId(), pageable);
+        boolean isEmpty = userSongList.getTotalElements() == 0;
+        if (isEmpty) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else return new ResponseEntity<>(userSongList, HttpStatus.OK);
     }
 }
