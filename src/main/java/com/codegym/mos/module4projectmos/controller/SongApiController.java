@@ -50,6 +50,7 @@ public class SongApiController {
         songService.save(song);
         String fileDownloadUri = audioStorageService.storeFile(multipartFile, song);
         song.setUrl(fileDownloadUri);
+        song.setUploader(userDetailService.getCurrentUser());
         songService.save(song);
         return new ResponseEntity<>(HttpStatus.OK);
     }
