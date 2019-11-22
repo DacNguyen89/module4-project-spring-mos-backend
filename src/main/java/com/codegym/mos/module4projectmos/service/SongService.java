@@ -13,5 +13,7 @@ public interface SongService {
 
     Optional<Song> findByName(String name);
 
+    Page<Song> findAllByUploader_Id(Long id, Pageable pageable);
+
     Song save(Song song);
 }
