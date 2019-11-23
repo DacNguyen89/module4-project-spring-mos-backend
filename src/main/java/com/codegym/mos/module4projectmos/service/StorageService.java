@@ -132,8 +132,7 @@ public abstract class StorageService<T> {
 
     private StorageClient getFirebaseStorage() {
         try {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream("/media/scopex/SSD/musikonthesea-4ea9012f32f4.json"))
-                    .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+            GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(credentials)
                     .setDatabaseUrl("https://musikonthesea.firebaseio.com")
