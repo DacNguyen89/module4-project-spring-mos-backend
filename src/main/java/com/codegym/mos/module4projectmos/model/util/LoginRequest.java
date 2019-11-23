@@ -1,32 +1,21 @@
-package com.codegym.mos.module4projectmos.model;
+package com.codegym.mos.module4projectmos.model.util;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
-@Entity
-@Table(name = "user")
-public class User {
+public class LoginRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
+    @NotBlank
     private String username;
+
+    @NotBlank
     private String password;
 
-    public User() {
+    public LoginRequest() {
     }
 
-    public User(String username, String password) {
+    public LoginRequest(@NotBlank String username, @NotBlank String password) {
         this.username = username;
         this.password = password;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUsername() {
@@ -45,3 +34,4 @@ public class User {
         this.password = password;
     }
 }
+
