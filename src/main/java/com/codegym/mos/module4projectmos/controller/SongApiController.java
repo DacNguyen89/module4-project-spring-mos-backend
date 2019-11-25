@@ -96,4 +96,15 @@ public class SongApiController {
         Optional<Song> song = songService.findById(id);
         return song.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    @PostMapping(params = {"listen", "song-id"})
+    public ResponseEntity<Void> listenToSong(@RequestParam("song-id") Long id) {
+        Optional<Song> song = songService.findById(id);
+        if (song.isPresent()) {
+            long currentListeningFrequency = song.get().getListeningFrequency();
+            song.get().setListeningFrequency(++currentListeningFrequency);
+            songService.save(song.get());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
