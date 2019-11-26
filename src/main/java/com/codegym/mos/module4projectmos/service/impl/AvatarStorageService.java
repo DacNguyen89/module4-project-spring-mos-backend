@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-//@Service
+@Service
 public class AvatarStorageService extends StorageService<User> {
 /*    final Path avatarStorageLocation;
 
