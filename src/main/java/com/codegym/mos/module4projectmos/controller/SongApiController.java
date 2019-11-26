@@ -34,8 +34,10 @@ public class SongApiController {
     ArtistService artistService;
     @Autowired
     UserDetailServiceImpl userDetailService;
+
     @Autowired
     private AudioStorageService audioStorageService;
+
     @Autowired
     private DownloadService downloadService;
 

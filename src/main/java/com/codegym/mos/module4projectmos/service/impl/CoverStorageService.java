@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 
 @Service
 public class CoverStorageService extends StorageService<Album> {
-    final Path coverStorageLocation;
+/*    final Path coverStorageLocation;
 
     @Autowired
     public CoverStorageService(CoverStorageProperty coverStorageProperty) {
@@ -24,5 +24,5 @@ public class CoverStorageService extends StorageService<Album> {
         } catch (Exception ex) {
             throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
         }
-    }
+    }*/
 }
