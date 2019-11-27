@@ -113,4 +113,17 @@ public class SongApiController {
         songService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping(value = "/search", params = "name")
+    public ResponseEntity<Iterable<Song>> songListByName(@RequestParam("name") String name) {
+        Iterable<Song> songList = songService.findAllByNameContaining(name);
+        int listSize = 0;
+        if (songList instanceof Collection) {
+            listSize = ((Collection<?>) songList).size();
+        }
+        if (listSize == 0) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(songList, HttpStatus.OK);
+    }
 }
