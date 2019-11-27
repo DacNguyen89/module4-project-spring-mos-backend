@@ -10,4 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface ArtistRepository extends JpaRepository<Artist, Long> {
     @Query(value = "SELECT * FROM album WHERE BINARY name=:name", nativeQuery = true)
     Artist findByName(@Param("name") String name);
+
+    /*@Query(nativeQuery = true, value = "SELECT * FROM public.artist "
+            + "WHERE LOWER(unaccent(name)) LIKE LOWER(unaccent(:name))||'%'")*/
+    Iterable<Artist> findAllByNameContaining(@Param("name") String name);
 }

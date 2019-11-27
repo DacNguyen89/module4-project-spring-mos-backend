@@ -1,12 +1,17 @@
 package com.codegym.mos.module4projectmos.controller;
 
+import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.Role;
+import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.model.entity.User;
+import com.codegym.mos.module4projectmos.model.form.SearchResponse;
 import com.codegym.mos.module4projectmos.model.form.UserForm;
 import com.codegym.mos.module4projectmos.model.util.CustomUserDetails;
 import com.codegym.mos.module4projectmos.model.util.LoginRequest;
 import com.codegym.mos.module4projectmos.model.util.LoginResponse;
 import com.codegym.mos.module4projectmos.repository.RoleRepository;
+import com.codegym.mos.module4projectmos.service.ArtistService;
+import com.codegym.mos.module4projectmos.service.SongService;
 import com.codegym.mos.module4projectmos.service.UserService;
 import com.codegym.mos.module4projectmos.service.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +57,12 @@ public class UserApiController {
 
     @Autowired
     private DownloadService downloadService;
+
+    @Autowired
+    private SongService songService;
+
+    @Autowired
+    private ArtistService artistService;
 
     /*@GetMapping(value = "/api/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -201,5 +212,13 @@ public class UserApiController {
     @GetMapping("/avatar/{fileName:.+}")
     public ResponseEntity<Resource> getAvatar(@PathVariable("fileName") String fileName, HttpServletRequest request) {
         return downloadService.generateUrl(fileName, request, avatarStorageService);
+    }
+
+    @GetMapping(value = "/search", params = "name")
+    public ResponseEntity<SearchResponse> search(@RequestParam("name") String name) {
+        Iterable<Song> songs = songService.findAllByNameContaining(name);
+        Iterable<Artist> artists = artistService.findAllByNameContaining(name);
+        SearchResponse searchResponse = new SearchResponse(songs, artists);
+        return new ResponseEntity<>(searchResponse, HttpStatus.OK);
     }
 }

@@ -10,4 +10,6 @@ public interface ArtistService {
     void save(Artist artist);
 
     String convertToString(Collection<Artist> artists);
+
+    Iterable<Artist> findAllByNameContaining(String name);
 }
