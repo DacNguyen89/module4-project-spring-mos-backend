@@ -107,4 +107,10 @@ public class SongApiController {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/delete", params = "id")
+    public ResponseEntity<Void> deleteSong(@RequestParam("id") Long id) {
+        songService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

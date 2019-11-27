@@ -15,6 +15,9 @@ public class SongServiceImpl implements SongService {
     @Autowired
     SongRepository songRepository;
 
+    @Autowired
+    AudioStorageService audioStorageService;
+
     @Override
     public Page<Song> findAll(Pageable pageable) {
         return songRepository.findAll(pageable);
@@ -38,5 +41,17 @@ public class SongServiceImpl implements SongService {
     @Override
     public Song save(Song song) {
         return songRepository.saveAndFlush(song);
+    }
+
+    @Override
+    public Boolean deleteById(Long id) {
+        Optional<Song> song = songRepository.findById(id);
+        if (song.isPresent()) {
+            songRepository.deleteById(id);
+            String fileUrl = song.get().getUrl();
+            String filename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+            return audioStorageService.deleteLocalStorageFile(audioStorageService.audioStorageLocation, filename);
+        }
+        return false;
     }
 }

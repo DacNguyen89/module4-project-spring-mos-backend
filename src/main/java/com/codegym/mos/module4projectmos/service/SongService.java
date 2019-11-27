@@ -16,4 +16,6 @@ public interface SongService {
     Page<Song> findAllByUploader_Id(Long id, Pageable pageable);
 
     Song save(Song song);
+
+    Boolean deleteById(Long id);
 }
