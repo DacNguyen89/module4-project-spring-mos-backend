@@ -53,9 +53,9 @@ public class SongServiceImpl implements SongService {
         Optional<Song> song = songRepository.findById(id);
         if (song.isPresent()) {
             songRepository.deleteById(id);
-            String fileUrl = song.get().getUrl();
+            /*String fileUrl = song.get().getUrl();
             String filename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-            return audioStorageService.deleteLocalStorageFile(audioStorageService.audioStorageLocation, filename);
+            return audioStorageService.deleteLocalStorageFile(audioStorageService.audioStorageLocation, filename);*/
         }
         return false;
     }
