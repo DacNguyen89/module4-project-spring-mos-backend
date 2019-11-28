@@ -98,7 +98,7 @@ public abstract class StorageService<T> {
         } else return null;
     }
 
-    public void deleteOldFile(Path storageLocation, Object object, MultipartFile file) {
+/*    public void deleteOldFile(Path storageLocation, Object object, MultipartFile file) {
         String newExtension = getNewExtension(file);
         // check if new image ext is different from old file ext
         String url = "";
@@ -115,7 +115,7 @@ public abstract class StorageService<T> {
                 deleteLocalStorageFile(storageLocation, oldExtension);
             }
         }
-    }
+    }*/
 
     public Resource loadFileAsResource(Path storageLocation, String fileName) {
         try {
