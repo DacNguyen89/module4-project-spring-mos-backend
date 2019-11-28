@@ -15,6 +15,9 @@ public class SongServiceImpl implements SongService {
     @Autowired
     SongRepository songRepository;
 
+    @Autowired
+    AudioStorageService audioStorageService;
+
     @Override
     public Page<Song> findAll(Pageable pageable) {
         return songRepository.findAll(pageable);
@@ -31,6 +34,11 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    public Iterable<Song> findAllByNameContaining(String name) {
+        return songRepository.findAllByNameContaining(name);
+    }
+
+    @Override
     public Page<Song> findAllByUploader_Id(Long id, Pageable pageable) {
         return songRepository.findAllByUploader_Id(id, pageable);
     }
@@ -38,5 +46,31 @@ public class SongServiceImpl implements SongService {
     @Override
     public Song save(Song song) {
         return songRepository.saveAndFlush(song);
+    }
+
+    @Override
+    public Boolean deleteById(Long id) {
+        Optional<Song> song = songRepository.findById(id);
+        if (song.isPresent()) {
+            songRepository.deleteById(id);
+            String fileUrl = song.get().getUrl();
+            String filename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+            return audioStorageService.deleteLocalStorageFile(audioStorageService.audioStorageLocation, filename);
+        }
+        return false;
+    }
+
+    @Override
+    public void setFields(Song oldSongInfo, Song newSongInfo) {
+        oldSongInfo.setName(newSongInfo.getName());
+        oldSongInfo.setArtists(newSongInfo.getArtists());
+        oldSongInfo.setGenres(newSongInfo.getGenres());
+        oldSongInfo.setCountry(newSongInfo.getCountry());
+        oldSongInfo.setReleaseDate(newSongInfo.getReleaseDate());
+        oldSongInfo.setTags(newSongInfo.getTags());
+        oldSongInfo.setTheme(newSongInfo.getTheme());
+        if (newSongInfo.getUrl() != null) {
+            oldSongInfo.setUrl(newSongInfo.getUrl());
+        }
     }
 }

@@ -22,4 +22,6 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     Optional<Song> findByName(@Param("name") String name);
 
     Page<Song> findAllByUploader_Id(Long id, Pageable pageable);
+
+    Iterable<Song> findAllByNameContaining(@Param("name") String name);
 }

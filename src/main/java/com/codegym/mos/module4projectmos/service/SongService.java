@@ -13,7 +13,13 @@ public interface SongService {
 
     Optional<Song> findByName(String name);
 
+    Iterable<Song> findAllByNameContaining(String name);
+
     Page<Song> findAllByUploader_Id(Long id, Pageable pageable);
 
     Song save(Song song);
+
+    Boolean deleteById(Long id);
+
+    void setFields(Song oldSongInfo, Song newSongInfo);
 }

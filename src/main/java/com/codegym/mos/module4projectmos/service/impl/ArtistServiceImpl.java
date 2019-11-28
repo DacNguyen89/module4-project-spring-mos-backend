@@ -33,4 +33,9 @@ public class ArtistServiceImpl implements ArtistService {
         }
         return artistsString;
     }
+
+    @Override
+    public Iterable<Artist> findAllByNameContaining(String name) {
+        return artistRepository.findAllByNameContaining(name);
+    }
 }

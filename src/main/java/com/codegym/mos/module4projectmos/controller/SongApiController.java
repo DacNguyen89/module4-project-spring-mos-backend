@@ -109,4 +109,39 @@ public class SongApiController {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/delete", params = "id")
+    public ResponseEntity<Void> deleteSong(@RequestParam("id") Long id) {
+        songService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/search", params = "name")
+    public ResponseEntity<Iterable<Song>> songListByName(@RequestParam("name") String name) {
+        Iterable<Song> songList = songService.findAllByNameContaining(name);
+        int listSize = 0;
+        if (songList instanceof Collection) {
+            listSize = ((Collection<?>) songList).size();
+        }
+        if (listSize == 0) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(songList, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/edit", params = "id")
+    public ResponseEntity<Void> editSong(@RequestPart("artist") Artist artist, @RequestPart("song") Song song, @RequestParam("id") Long id, @RequestPart(value = "audio", required = false) MultipartFile multipartFile) {
+        Optional<Song> oldSong = songService.findById(id);
+        if (oldSong.isPresent()) {
+            if (multipartFile != null) {
+                String fileDownloadUri = audioStorageService.saveToFirebaseStorage(oldSong.get(), multipartFile);
+                song.setUrl(fileDownloadUri);
+            }
+            songService.setFields(oldSong.get(), song);
+            songService.save(oldSong.get());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
 }
