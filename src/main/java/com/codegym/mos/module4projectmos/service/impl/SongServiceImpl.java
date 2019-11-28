@@ -59,4 +59,18 @@ public class SongServiceImpl implements SongService {
         }
         return false;
     }
+
+    @Override
+    public void setFields(Song oldSongInfo, Song newSongInfo) {
+        oldSongInfo.setName(newSongInfo.getName());
+        oldSongInfo.setArtists(newSongInfo.getArtists());
+        oldSongInfo.setGenres(newSongInfo.getGenres());
+        oldSongInfo.setCountry(newSongInfo.getCountry());
+        oldSongInfo.setReleaseDate(newSongInfo.getReleaseDate());
+        oldSongInfo.setTags(newSongInfo.getTags());
+        oldSongInfo.setTheme(newSongInfo.getTheme());
+        if (newSongInfo.getUrl() != null) {
+            oldSongInfo.setUrl(newSongInfo.getUrl());
+        }
+    }
 }

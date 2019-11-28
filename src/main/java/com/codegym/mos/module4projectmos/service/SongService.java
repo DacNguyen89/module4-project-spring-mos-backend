@@ -20,4 +20,6 @@ public interface SongService {
     Song save(Song song);
 
     Boolean deleteById(Long id);
+
+    void setFields(Song oldSongInfo, Song newSongInfo);
 }
