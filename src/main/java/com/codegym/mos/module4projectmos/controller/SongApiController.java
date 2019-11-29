@@ -73,10 +73,6 @@ public class SongApiController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/upload")
     public ResponseEntity<Void> uploadSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file, @RequestParam(value = "album-id", required = false) Long id) {
-        Collection<Artist> artists = song.getArtists();
-        for (Artist artist : artists) {
-            artistService.save(artist);
-        }
         try {
             Song songToSave = songService.save(song);
             String fileDownloadUri = audioStorageService.saveToFirebaseStorage(songToSave, file);

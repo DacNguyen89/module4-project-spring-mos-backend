@@ -3,11 +3,9 @@ package com.codegym.mos.module4projectmos.model.entity;
 import com.codegym.mos.module4projectmos.model.util.MediaObject;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -53,7 +51,7 @@ public class Song extends MediaObject {
 
     private String blobString;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "song_artist",
             joinColumns = @JoinColumn(
@@ -63,7 +61,7 @@ public class Song extends MediaObject {
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<Artist> artists;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "songs")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "songs", cascade = CascadeType.ALL)
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<Album> albums;
 
@@ -101,12 +99,12 @@ public class Song extends MediaObject {
     private Collection<Playlist> playlists;
 
     @JsonBackReference("song-country")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "country_id")
     private Country country;
 
     @JsonBackReference("song-theme")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
@@ -119,7 +117,7 @@ public class Song extends MediaObject {
     public String toString() {
         return "Song{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", title='" + name + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", url='" + url + '\'' +
                 '}';

@@ -45,7 +45,8 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public Song save(Song song) {
-        return songRepository.saveAndFlush(song);
+        songRepository.saveAndFlush(song);
+        return song;
     }
 
     @Override
