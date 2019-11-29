@@ -62,7 +62,7 @@ public class SongApiController {
     }*/
 
     @PostMapping("/upload")
-    public ResponseEntity<Void> uploadSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file, @RequestParam(value = "album-id", required = false) Long id) {
+    public ResponseEntity<String> uploadSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file, @RequestParam(value = "album-id", required = false) Long id) {
         try {
             Song songToSave = songService.save(song);
             String fileDownloadUri = audioStorageService.saveToFirebaseStorage(songToSave, file);
@@ -86,7 +86,7 @@ public class SongApiController {
             if (song.getId() != null) {
                 songService.deleteById(song.getId());
             }
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
