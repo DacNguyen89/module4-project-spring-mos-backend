@@ -10,4 +10,6 @@ public interface AlbumService {
     Page<Album> findAll(Pageable pageable);
 
     Optional<Album> findById(Long id);
+
+    void save(Album album);
 }

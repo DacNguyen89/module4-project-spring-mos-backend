@@ -1,8 +1,10 @@
 package com.codegym.mos.module4projectmos.controller;
 
+import com.codegym.mos.module4projectmos.model.entity.Album;
 import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.model.entity.User;
+import com.codegym.mos.module4projectmos.service.AlbumService;
 import com.codegym.mos.module4projectmos.service.ArtistService;
 import com.codegym.mos.module4projectmos.service.SongService;
 import com.codegym.mos.module4projectmos.service.impl.AudioStorageService;
@@ -42,6 +44,9 @@ public class SongApiController {
     @Autowired
     private DownloadService downloadService;
 
+    @Autowired
+    private AlbumService albumService;
+
 /*    @PostMapping("/upload")
     public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile multipartFile) {
         Collection<Artist> artists = song.getArtists();
@@ -57,17 +62,32 @@ public class SongApiController {
     }*/
 
     @PostMapping("/upload")
-    public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file) {
-        Collection<Artist> artists = song.getArtists();
-        for (Artist artist : artists) {
-            artistService.save(artist);
+    public ResponseEntity<Void> uploadSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file, @RequestParam(value = "album-id", required = false) Long id) {
+        try {
+            Song songToSave = songService.save(song);
+            String fileDownloadUri = audioStorageService.saveToFirebaseStorage(songToSave, file);
+            songToSave.setUrl(fileDownloadUri);
+            songToSave.setUploader(userDetailService.getCurrentUser());
+            if (id != null) {
+                Optional<Album> album = albumService.findById(id);
+                if (album.isPresent()) {
+                    Collection<Song> songList = album.get().getSongs();
+                    if (songList == null) {
+                        songList = new ArrayList<>();
+                    }
+                    songList.add(song);
+                    album.get().setSongs(songList);
+                    albumService.save(album.get());
+                }
+            }
+            songService.save(songToSave);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            if (song.getId() != null) {
+                songService.deleteById(song.getId());
+            }
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        songService.save(song);
-        String fileDownloadUri = audioStorageService.saveToFirebaseStorage(song, file);
-        song.setUrl(fileDownloadUri);
-        song.setUploader(userDetailService.getCurrentUser());
-        songService.save(song);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /*@PreAuthorize("isAuthenticated()")
