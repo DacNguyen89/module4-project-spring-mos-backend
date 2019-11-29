@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -55,7 +56,7 @@ public class SongApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }*/
 
-    @PostMapping("/upload")
+/*    @PostMapping("/upload")
     public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file) {
         Collection<Artist> artists = song.getArtists();
         for (Artist artist : artists) {
@@ -67,6 +68,29 @@ public class SongApiController {
         song.setUploader(userDetailService.getCurrentUser());
         songService.save(song);
         return new ResponseEntity<>(HttpStatus.OK);
+    }*/
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/upload")
+    public ResponseEntity<Void> uploadSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file, @RequestParam(value = "album-id", required = false) Long id) {
+        Collection<Artist> artists = song.getArtists();
+        for (Artist artist : artists) {
+            artistService.save(artist);
+        }
+        try {
+            Song songToSave = songService.save(song);
+            String fileDownloadUri = audioStorageService.saveToFirebaseStorage(songToSave, file);
+            songToSave.setUrl(fileDownloadUri);
+            songToSave.setUploader(userDetailService.getCurrentUser());
+
+            songService.save(songToSave);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            if (song.getId() != null) {
+                songService.deleteById(song.getId());
+            }
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/download/{fileName:.+}")
@@ -130,7 +154,7 @@ public class SongApiController {
     }
 
     @PutMapping(value = "/edit", params = "id")
-    public ResponseEntity<Void> editSong(@RequestPart("artist") Artist artist, @RequestPart("song") Song song, @RequestParam("id") Long id, @RequestPart(value = "audio", required = false) MultipartFile multipartFile) {
+    public ResponseEntity<Void> editSong(@RequestPart("song") Song song, @RequestParam("id") Long id, @RequestPart(value = "audio", required = false) MultipartFile multipartFile) {
         Optional<Song> oldSong = songService.findById(id);
         if (oldSong.isPresent()) {
             if (multipartFile != null) {
