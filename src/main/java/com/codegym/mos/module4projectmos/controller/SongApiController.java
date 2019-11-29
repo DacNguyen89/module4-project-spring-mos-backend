@@ -56,7 +56,7 @@ public class SongApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }*/
 
-/*    @PostMapping("/upload")
+    @PostMapping("/upload")
     public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file) {
         Collection<Artist> artists = song.getArtists();
         for (Artist artist : artists) {
@@ -68,9 +68,9 @@ public class SongApiController {
         song.setUploader(userDetailService.getCurrentUser());
         songService.save(song);
         return new ResponseEntity<>(HttpStatus.OK);
-    }*/
+    }
 
-    @PreAuthorize("isAuthenticated()")
+    /*@PreAuthorize("isAuthenticated()")
     @PostMapping("/upload")
     public ResponseEntity<Void> uploadSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file, @RequestParam(value = "album-id", required = false) Long id) {
         try {
@@ -87,7 +87,7 @@ public class SongApiController {
             }
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    }*/
 
     @GetMapping("/download/{fileName:.+}")
     public ResponseEntity<Resource> downloadAudio(@PathVariable String fileName, HttpServletRequest request) {
