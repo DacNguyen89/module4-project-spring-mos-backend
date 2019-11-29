@@ -53,7 +53,7 @@ public class Song extends MediaObject {
 
     private String blobString;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "song_artist",
             joinColumns = @JoinColumn(
