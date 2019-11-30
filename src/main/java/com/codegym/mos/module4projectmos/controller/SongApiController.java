@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Optional;
 
 @CrossOrigin("*")
@@ -64,6 +65,11 @@ public class SongApiController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file, @RequestParam(value = "album-id", required = false) Long id) {
         try {
+            Iterator iterator = song.getArtists().iterator();
+            while (iterator.hasNext()) {
+                artistService.save((Artist) iterator.next());
+            }
+
             Song songToSave = songService.save(song);
             String fileDownloadUri = audioStorageService.saveToFirebaseStorage(songToSave, file);
             songToSave.setUrl(fileDownloadUri);
