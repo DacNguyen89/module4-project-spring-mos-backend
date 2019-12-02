@@ -1,11 +1,9 @@
 package com.codegym.mos.module4projectmos.controller;
 
-import com.codegym.mos.module4projectmos.model.entity.Album;
-import com.codegym.mos.module4projectmos.model.entity.Artist;
-import com.codegym.mos.module4projectmos.model.entity.Song;
-import com.codegym.mos.module4projectmos.model.entity.User;
+import com.codegym.mos.module4projectmos.model.entity.*;
 import com.codegym.mos.module4projectmos.service.AlbumService;
 import com.codegym.mos.module4projectmos.service.ArtistService;
+import com.codegym.mos.module4projectmos.service.CommentService;
 import com.codegym.mos.module4projectmos.service.SongService;
 import com.codegym.mos.module4projectmos.service.impl.AudioStorageService;
 import com.codegym.mos.module4projectmos.service.impl.DownloadService;
@@ -22,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -47,6 +47,9 @@ public class SongApiController {
 
     @Autowired
     private AlbumService albumService;
+
+    @Autowired
+    CommentService commentService;
 
 /*    @PostMapping("/upload")
     public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile multipartFile) {
@@ -185,4 +188,18 @@ public class SongApiController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(params = {"comment", "song-id"})
+    public ResponseEntity<Void> commentOnSong(@Valid @RequestBody Comment comment, @RequestParam("song-id") Long id) {
+        Optional<Song> song = songService.findById(id);
+        if (song.isPresent()) {
+            LocalDateTime localDateTime = LocalDateTime.now();
+            User currentUser = userDetailService.getCurrentUser();
+            comment.setLocalDateTime(localDateTime);
+            comment.setSong(song.get());
+            comment.setUser(currentUser);
+            commentService.save(comment);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }
