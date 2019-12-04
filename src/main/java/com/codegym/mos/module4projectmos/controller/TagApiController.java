@@ -46,4 +46,10 @@ public class TagApiController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else return new ResponseEntity<>(filteredTagList, HttpStatus.OK);
     }
+
+    @DeleteMapping(params = {"action=delete", "id"})
+    public ResponseEntity<String> deleteTag(@RequestParam Long id) {
+        tagService.deleteById(id);
+        return new ResponseEntity<>("Tag title removed in database!", HttpStatus.OK);
+    }
 }
