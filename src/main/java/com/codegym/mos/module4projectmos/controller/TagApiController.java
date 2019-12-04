@@ -38,5 +38,12 @@ public class TagApiController {
         } else return new ResponseEntity<>(tagList, HttpStatus.OK);
     }
 
-
+    @GetMapping(params = "action=search")
+    public ResponseEntity<Page<Tag>> tagSearch(@RequestParam String name, Pageable pageable) {
+        Page<Tag> filteredTagList = tagService.findAllByNameContaining(name, pageable);
+        boolean isEmpty = filteredTagList.getTotalElements() == 0;
+        if (isEmpty) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else return new ResponseEntity<>(filteredTagList, HttpStatus.OK);
+    }
 }
