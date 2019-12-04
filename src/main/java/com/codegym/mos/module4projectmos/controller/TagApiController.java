@@ -52,4 +52,16 @@ public class TagApiController {
         tagService.deleteById(id);
         return new ResponseEntity<>("Tag title removed in database!", HttpStatus.OK);
     }
+
+    @PutMapping(params = {"action=edit", "id"})
+    public ResponseEntity<String> editTag(@Valid @RequestBody Tag tag, @RequestParam Long id) {
+        Tag checkedTag = tagService.findByName(tag.getName());
+        if (checkedTag != null) {
+            return new ResponseEntity<>("Tag title has already existed in database!", HttpStatus.UNPROCESSABLE_ENTITY);
+        } else {
+            tag.setId(id);
+            tagService.save(tag);
+            return new ResponseEntity<>("Tag title updated in database!", HttpStatus.OK);
+        }
+    }
 }
