@@ -3,6 +3,8 @@ package com.codegym.mos.module4projectmos.controller;
 import com.codegym.mos.module4projectmos.model.entity.Tag;
 import com.codegym.mos.module4projectmos.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,15 @@ public class TagApiController {
             tagService.save(tag);
             return new ResponseEntity<>("Tag title created in database!", HttpStatus.CREATED);
         }
+    }
+
+    @GetMapping(params = "action=list")
+    public ResponseEntity<Page<Tag>> tagList(Pageable pageable) {
+        Page<Tag> tagList = tagService.findAll(pageable);
+        boolean isEmpty = tagList.getTotalElements() == 0;
+        if (isEmpty) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else return new ResponseEntity<>(tagList, HttpStatus.OK);
     }
 
 
