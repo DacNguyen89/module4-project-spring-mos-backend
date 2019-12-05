@@ -165,9 +165,9 @@ public class SongApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(value = "/search", params = "name")
-    public ResponseEntity<Iterable<Song>> songListByName(@RequestParam("name") String name) {
-        Iterable<Song> songList = songService.findAllByNameContaining(name);
+    @GetMapping(value = "/search", params = "title")
+    public ResponseEntity<Iterable<Song>> songListByName(@RequestParam("title") String title) {
+        Iterable<Song> songList = songService.findAllByTitleContaining(title);
         int listSize = 0;
         if (songList instanceof Collection) {
             listSize = ((Collection<?>) songList).size();

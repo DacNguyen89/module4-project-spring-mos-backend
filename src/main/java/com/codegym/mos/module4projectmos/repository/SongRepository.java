@@ -20,14 +20,14 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     //@Query("SELECT s, ar, c, t from Song s JOIN FETCH s.artists ar JOIN FETCH s.country c JOIN FETCH s.theme t WHERE s.id=:id")
     Optional<Song> findById(@Param("id") Long id);
 
-    @Query(value = "SELECT * FROM song WHERE BINARY name=:name", nativeQuery = true)
-    Optional<Song> findByName(@Param("name") String name);
+    @Query(value = "SELECT * FROM song WHERE BINARY title=:title", nativeQuery = true)
+    Optional<Song> findByTitle(@Param("title") String title);
 
     Page<Song> findAllByUploader_Id(Long id, Pageable pageable);
 
     Page<Song> findAllByArtistsContains(Artist artist, Pageable pageable);
 
-    Iterable<Song> findAllByNameContaining(@Param("name") String name);
+    Iterable<Song> findAllByTitleContaining(@Param("title") String title);
 
     Page<Song> findAllByUsersContains(User user, Pageable pageable);
 

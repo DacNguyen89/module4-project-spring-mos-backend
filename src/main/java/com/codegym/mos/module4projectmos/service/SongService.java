@@ -15,9 +15,9 @@ public interface SongService {
 
     Optional<Song> findById(Long id);
 
-    Optional<Song> findByName(String name);
+    Optional<Song> findByTitle(String title);
 
-    Iterable<Song> findAllByNameContaining(String name);
+    Iterable<Song> findAllByTitleContaining(String title);
 
     Page<Song> findAllByUploader_Id(Long id, Pageable pageable);
 
