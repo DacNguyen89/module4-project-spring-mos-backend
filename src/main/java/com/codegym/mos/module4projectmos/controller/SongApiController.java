@@ -202,4 +202,13 @@ public class SongApiController {
             return new ResponseEntity<>(HttpStatus.OK);
         } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/my-song")
+    public ResponseEntity<Page<Song>> mySongList(Pageable pageable) {
+        Page<Song> mySongList = songService.findAllByUsersContains(userDetailService.getCurrentUser(), pageable);
+        if (mySongList.getTotalElements() > 0) {
+            return new ResponseEntity<>(mySongList, HttpStatus.OK);
+        } else return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

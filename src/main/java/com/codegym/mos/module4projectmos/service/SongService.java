@@ -1,6 +1,7 @@
 package com.codegym.mos.module4projectmos.service;
 
 import com.codegym.mos.module4projectmos.model.entity.Song;
+import com.codegym.mos.module4projectmos.model.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,4 +23,14 @@ public interface SongService {
     Boolean deleteById(Long id);
 
     void setFields(Song oldSongInfo, Song newSongInfo);
+
+    Page<Song> findAllByUsersContains(User user, Pageable pageable);
+
+    boolean hasUserLiked(Long songId);
+
+    void setLike(Page<Song> songList);
+
+    void setLike(Iterable<Song> songList);
+
+    void setLike(Song song);
 }
