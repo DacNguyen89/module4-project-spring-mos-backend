@@ -14,4 +14,6 @@ public interface ArtistRepository extends JpaRepository<Artist, Long> {
     /*@Query(nativeQuery = true, value = "SELECT * FROM public.artist "
             + "WHERE LOWER(unaccent(name)) LIKE LOWER(unaccent(:name))||'%'")*/
     Iterable<Artist> findAllByNameContaining(@Param("name") String name);
+
+    Iterable<Artist> findFirst10ByNameContaining(String name);
 }

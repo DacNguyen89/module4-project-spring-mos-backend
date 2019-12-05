@@ -12,4 +12,6 @@ public interface ArtistService {
     String convertToString(Collection<Artist> artists);
 
     Iterable<Artist> findAllByNameContaining(String name);
+
+    Iterable<Artist> findTop10ByNameContaining(String name);
 }
