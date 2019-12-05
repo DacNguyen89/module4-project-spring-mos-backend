@@ -29,4 +29,16 @@ public class ArtistApiController {
         artistService.save(artist);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping(value = "/search", params = "name")
+    public ResponseEntity<Iterable<Artist>> searchArtistByName(@RequestParam("name") String name) {
+        Iterable<Artist> artistList = artistService.findTop10ByNameContaining(name);
+        long size = 0;
+        if (artistList instanceof Collection) {
+            size = ((Collection<Artist>) artistList).size();
+        }
+        if (size == 0) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else return new ResponseEntity<>(artistList, HttpStatus.OK);
+    }
 }
