@@ -1,6 +1,8 @@
 package com.codegym.mos.module4projectmos.repository;
 
 import com.codegym.mos.module4projectmos.model.entity.Artist;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +18,6 @@ public interface ArtistRepository extends JpaRepository<Artist, Long> {
     Iterable<Artist> findAllByNameContaining(@Param("name") String name);
 
     Iterable<Artist> findFirst10ByNameContaining(String name);
+
+    Page<Artist> findAllByNameContaining(String name, Pageable pageable);
 }

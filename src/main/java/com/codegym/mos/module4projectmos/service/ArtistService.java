@@ -1,6 +1,8 @@
 package com.codegym.mos.module4projectmos.service;
 
 import com.codegym.mos.module4projectmos.model.entity.Artist;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
 
@@ -14,4 +16,8 @@ public interface ArtistService {
     Iterable<Artist> findAllByNameContaining(String name);
 
     Iterable<Artist> findTop10ByNameContaining(String name);
+
+    Page<Artist> findAllByNameContaining(String name, Pageable pageable);
+
+    Page<Artist> findAll(Pageable pageable);
 }

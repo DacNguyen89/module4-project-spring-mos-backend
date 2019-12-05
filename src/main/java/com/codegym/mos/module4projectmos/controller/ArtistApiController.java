@@ -4,6 +4,8 @@ import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.service.ArtistService;
 import com.codegym.mos.module4projectmos.service.impl.AvatarStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +42,14 @@ public class ArtistApiController {
         if (size == 0) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else return new ResponseEntity<>(artistList, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/list")
+    public ResponseEntity<Page<Artist>> getArtistList(Pageable pageable) {
+        Page<Artist> artistList = artistService.findAll(pageable);
+        if (artistList.getTotalElements() == 0) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(artistList, HttpStatus.OK);
     }
 }
