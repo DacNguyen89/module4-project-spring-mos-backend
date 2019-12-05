@@ -1,17 +1,21 @@
 package com.codegym.mos.module4projectmos.controller;
 
 import com.codegym.mos.module4projectmos.model.entity.Artist;
+import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.service.ArtistService;
+import com.codegym.mos.module4projectmos.service.SongService;
 import com.codegym.mos.module4projectmos.service.impl.AvatarStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
@@ -19,7 +23,9 @@ import java.util.Collection;
 public class ArtistApiController {
     @Autowired
     ArtistService artistService;
+
     @Autowired
+    SongService songService;
 
     AvatarStorageService avatarStorageService;
 
@@ -51,5 +57,18 @@ public class ArtistApiController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(artistList, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/song-list", params = "artist-id")
+    public ResponseEntity<Page<Song>> getSongListOfArtist(@RequestParam("artist-id") Long id, @PageableDefault(size = 5) Pageable pageable) {
+        Optional<Artist> artist = artistService.findById(id);
+        if (artist.isPresent()) {
+            Page<Song> songList = songService.findAllByArtistsContains(artist.get(), pageable);
+            if (songList.getTotalElements() > 0) {
+                songService.setLike(songList);
+                return new ResponseEntity<>(songList, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
