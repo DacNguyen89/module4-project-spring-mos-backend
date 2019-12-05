@@ -1,5 +1,6 @@
 package com.codegym.mos.module4projectmos.service;
 
+import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.model.entity.User;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,8 @@ public interface SongService {
     Iterable<Song> findAllByNameContaining(String name);
 
     Page<Song> findAllByUploader_Id(Long id, Pageable pageable);
+
+    Page<Song> findAllByArtistsContains(Artist artist, Pageable pageable);
 
     Song save(Song song);
 

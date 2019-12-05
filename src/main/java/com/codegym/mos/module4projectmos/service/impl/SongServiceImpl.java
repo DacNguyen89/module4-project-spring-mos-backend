@@ -1,5 +1,6 @@
 package com.codegym.mos.module4projectmos.service.impl;
 
+import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.Like;
 import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.model.entity.User;
@@ -50,6 +51,11 @@ public class SongServiceImpl implements SongService {
     @Override
     public Page<Song> findAllByUploader_Id(Long id, Pageable pageable) {
         return songRepository.findAllByUploader_Id(id, pageable);
+    }
+
+    @Override
+    public Page<Song> findAllByArtistsContains(Artist artist, Pageable pageable) {
+        return songRepository.findAllByArtistsContains(artist, pageable);
     }
 
     @Override

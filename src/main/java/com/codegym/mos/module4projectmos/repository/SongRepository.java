@@ -1,5 +1,6 @@
 package com.codegym.mos.module4projectmos.repository;
 
+import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.model.entity.User;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,8 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     Optional<Song> findByName(@Param("name") String name);
 
     Page<Song> findAllByUploader_Id(Long id, Pageable pageable);
+
+    Page<Song> findAllByArtistsContains(Artist artist, Pageable pageable);
 
     Iterable<Song> findAllByNameContaining(@Param("name") String name);
 
