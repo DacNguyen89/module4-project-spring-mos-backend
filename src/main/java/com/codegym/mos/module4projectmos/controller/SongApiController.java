@@ -218,4 +218,11 @@ public class SongApiController {
         likeService.like(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(params = {"unlike", "song-id"})
+    public ResponseEntity<Void> dislikeSong(@RequestParam("song-id") Long id) {
+        likeService.unlike(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
