@@ -1,10 +1,7 @@
 package com.codegym.mos.module4projectmos.controller;
 
 import com.codegym.mos.module4projectmos.model.entity.*;
-import com.codegym.mos.module4projectmos.service.AlbumService;
-import com.codegym.mos.module4projectmos.service.ArtistService;
-import com.codegym.mos.module4projectmos.service.CommentService;
-import com.codegym.mos.module4projectmos.service.SongService;
+import com.codegym.mos.module4projectmos.service.*;
 import com.codegym.mos.module4projectmos.service.impl.AudioStorageService;
 import com.codegym.mos.module4projectmos.service.impl.DownloadService;
 import com.codegym.mos.module4projectmos.service.impl.UserDetailServiceImpl;
@@ -50,6 +47,9 @@ public class SongApiController {
 
     @Autowired
     CommentService commentService;
+
+    @Autowired
+    LikeService likeService;
 
 /*    @PostMapping("/upload")
     public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile multipartFile) {
@@ -210,5 +210,12 @@ public class SongApiController {
         if (mySongList.getTotalElements() > 0) {
             return new ResponseEntity<>(mySongList, HttpStatus.OK);
         } else return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(params = {"like", "song-id"})
+    public ResponseEntity<Void> likeSong(@RequestParam("song-id") Long id) {
+        likeService.like(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
