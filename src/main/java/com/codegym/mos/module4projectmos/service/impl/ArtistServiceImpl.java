@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class ArtistServiceImpl implements ArtistService {
@@ -43,6 +44,11 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     public Page<Artist> findAll(Pageable pageable) {
         return artistRepository.findAll(pageable);
+    }
+
+    @Override
+    public Optional<Artist> findById(Long id) {
+        return artistRepository.findById(id);
     }
 
     public String convertToString(Collection<Artist> artists) {
