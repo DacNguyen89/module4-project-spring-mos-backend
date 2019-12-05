@@ -1,6 +1,10 @@
 package com.codegym.mos.module4projectmos.service.impl;
 
+import com.codegym.mos.module4projectmos.model.entity.Artist;
+import com.codegym.mos.module4projectmos.model.entity.Like;
 import com.codegym.mos.module4projectmos.model.entity.Song;
+import com.codegym.mos.module4projectmos.model.entity.User;
+import com.codegym.mos.module4projectmos.repository.LikeRepository;
 import com.codegym.mos.module4projectmos.repository.SongRepository;
 import com.codegym.mos.module4projectmos.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +20,30 @@ public class SongServiceImpl implements SongService {
     SongRepository songRepository;
 
     @Autowired
+    LikeRepository likeRepository;
+
+    @Autowired
     AudioStorageService audioStorageService;
 
+    @Autowired
+    UserDetailServiceImpl userDetailService;
+
     @Override
-    public Page<Song> findAll(Pageable pageable) {
-        return songRepository.findAll(pageable);
+    public Iterable<Song> findAll() {
+        return songRepository.findAll();
+    }
+
+    @Override
+    public Page<Song> findAll(Pageable pageable, String sort) {
+        if (sort != null && sort.equals("releaseDate")) {
+            return songRepository.findAllByOrderByReleaseDateDesc(pageable);
+        } else if (sort != null && sort.equals("listeningFrequency")) {
+            return songRepository.findAllByOrderByListeningFrequencyDesc(pageable);
+        } else if (sort != null && sort.equals("likesCount")) {
+            return songRepository.findAllByOrderByUsers_Size(pageable);
+        } else {
+            return songRepository.findAll(pageable);
+        }
     }
 
     @Override
@@ -41,6 +64,18 @@ public class SongServiceImpl implements SongService {
     @Override
     public Page<Song> findAllByUploader_Id(Long id, Pageable pageable) {
         return songRepository.findAllByUploader_Id(id, pageable);
+    }
+
+    @Override
+    public Page<Song> findAllByArtistsContains(Artist artist, Pageable pageable) {
+        return songRepository.findAllByArtistsContains(artist, pageable);
+    }
+
+    @Override
+    public Iterable<Song> findTop10By(String sort) {
+        if (sort.equals("listeningFrequency")) {
+            return songRepository.findFirst10ByOrderByListeningFrequencyDesc();
+        } else return songRepository.findFirst10ByOrderByListeningFrequencyDesc();
     }
 
     @Override
@@ -72,6 +107,51 @@ public class SongServiceImpl implements SongService {
         oldSongInfo.setTheme(newSongInfo.getTheme());
         if (newSongInfo.getUrl() != null) {
             oldSongInfo.setUrl(newSongInfo.getUrl());
+        }
+    }
+
+    @Override
+    public Page<Song> findAllByUsersContains(User user, Pageable pageable) {
+        Page<Song> songList = songRepository.findAllByUsersContains(user, pageable);
+        setLike(songList);
+        return songList;
+    }
+
+    @Override
+    public boolean hasUserLiked(Long songId) {
+        Long userId = userDetailService.getCurrentUser().getId();
+        Like like = likeRepository.findBySongIdAndUserId(songId, userId);
+        return (like != null);
+    }
+
+    @Override
+    public void setLike(Song song) {
+        if (hasUserLiked(song.getId())) {
+            song.setLiked(true);
+        } else {
+            song.setLiked(false);
+        }
+    }
+
+    @Override
+    public void setLike(Page<Song> songList) {
+        for (Song song : songList) {
+            if (hasUserLiked(song.getId())) {
+                song.setLiked(true);
+            } else {
+                song.setLiked(false);
+            }
+        }
+    }
+
+    @Override
+    public void setLike(Iterable<Song> songList) {
+        for (Song song : songList) {
+            if (hasUserLiked(song.getId())) {
+                song.setLiked(true);
+            } else {
+                song.setLiked(false);
+            }
         }
     }
 }

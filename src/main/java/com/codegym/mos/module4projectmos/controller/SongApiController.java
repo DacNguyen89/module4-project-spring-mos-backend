@@ -1,10 +1,7 @@
 package com.codegym.mos.module4projectmos.controller;
 
 import com.codegym.mos.module4projectmos.model.entity.*;
-import com.codegym.mos.module4projectmos.service.AlbumService;
-import com.codegym.mos.module4projectmos.service.ArtistService;
-import com.codegym.mos.module4projectmos.service.CommentService;
-import com.codegym.mos.module4projectmos.service.SongService;
+import com.codegym.mos.module4projectmos.service.*;
 import com.codegym.mos.module4projectmos.service.impl.AudioStorageService;
 import com.codegym.mos.module4projectmos.service.impl.DownloadService;
 import com.codegym.mos.module4projectmos.service.impl.UserDetailServiceImpl;
@@ -12,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +48,9 @@ public class SongApiController {
 
     @Autowired
     CommentService commentService;
+
+    @Autowired
+    LikeService likeService;
 
 /*    @PostMapping("/upload")
     public ResponseEntity<Void> createSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile multipartFile) {
@@ -118,12 +119,15 @@ public class SongApiController {
         return downloadService.generateUrl(fileName, request, audioStorageService);
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<Page<Song>> songList(Pageable pageable) {
-        Page<Song> songList = songService.findAll(pageable);
+    @GetMapping(value = "/list")
+    public ResponseEntity<Page<Song>> songList(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sort", required = false) String sort) {
+        Page<Song> songList = songService.findAll(pageable, sort);
         if (songList.getTotalElements() == 0) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else return new ResponseEntity<>(songList, HttpStatus.OK);
+        } else {
+            songService.setLike(songList);
+            return new ResponseEntity<>(songList, HttpStatus.OK);
+        }
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -137,9 +141,10 @@ public class SongApiController {
         } else return new ResponseEntity<>(userSongList, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/detail")
-    public ResponseEntity<Song> songDetail(@RequestParam Long id) {
+    @GetMapping(value = "/detail", params = "id")
+    public ResponseEntity<Song> songDetail(@RequestParam("id") Long id) {
         Optional<Song> song = songService.findById(id);
+        song.ifPresent(value -> songService.setLike(value));
         return song.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -201,5 +206,48 @@ public class SongApiController {
             commentService.save(comment);
             return new ResponseEntity<>(HttpStatus.OK);
         } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/my-song")
+    public ResponseEntity<Page<Song>> mySongList(Pageable pageable) {
+        Page<Song> mySongList = songService.findAllByUsersContains(userDetailService.getCurrentUser(), pageable);
+        if (mySongList.getTotalElements() > 0) {
+            return new ResponseEntity<>(mySongList, HttpStatus.OK);
+        } else return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(params = {"like", "song-id"})
+    public ResponseEntity<Void> likeSong(@RequestParam("song-id") Long id) {
+        likeService.like(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(params = {"unlike", "song-id"})
+    public ResponseEntity<Void> dislikeSong(@RequestParam("song-id") Long id) {
+        likeService.unlike(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/list-top")
+    public ResponseEntity<Iterable<Song>> topSongList(@RequestParam(value = "sort", required = false) String sort) {
+        Iterable<Song> songList;
+        if (sort != null) {
+            songList = songService.findTop10By(sort);
+        } else {
+            songList = songService.findAll();
+        }
+        int size = 0;
+        if (songList instanceof Collection) {
+            size = ((Collection<?>) songList).size();
+        }
+        if (size == 0) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            songService.setLike(songList);
+            return new ResponseEntity<>(songList, HttpStatus.OK);
+        }
     }
 }
