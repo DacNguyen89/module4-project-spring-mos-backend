@@ -9,7 +9,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface SongService {
-    Page<Song> findAll(Pageable pageable);
+    Iterable<Song> findAll();
+
+    Page<Song> findAll(Pageable pageable, String sort);
 
     Optional<Song> findById(Long id);
 
@@ -20,6 +22,8 @@ public interface SongService {
     Page<Song> findAllByUploader_Id(Long id, Pageable pageable);
 
     Page<Song> findAllByArtistsContains(Artist artist, Pageable pageable);
+
+    Iterable<Song> findTop10By(String sort);
 
     Song save(Song song);
 

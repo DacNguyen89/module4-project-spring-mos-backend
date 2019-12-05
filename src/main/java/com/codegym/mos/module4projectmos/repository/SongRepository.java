@@ -30,4 +30,14 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     Iterable<Song> findAllByNameContaining(@Param("name") String name);
 
     Page<Song> findAllByUsersContains(User user, Pageable pageable);
+
+
+    Page<Song> findAllByOrderByReleaseDateDesc(Pageable pageable);
+
+    Page<Song> findAllByOrderByListeningFrequencyDesc(Pageable pageable);
+
+    Iterable<Song> findFirst10ByOrderByListeningFrequencyDesc();
+
+    @Query("SELECT s FROM Song s ORDER BY SIZE(s.users) DESC")
+    Page<Song> findAllByOrderByUsers_Size(Pageable pageable);
 }

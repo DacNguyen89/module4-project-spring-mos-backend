@@ -29,8 +29,21 @@ public class SongServiceImpl implements SongService {
     UserDetailServiceImpl userDetailService;
 
     @Override
-    public Page<Song> findAll(Pageable pageable) {
-        return songRepository.findAll(pageable);
+    public Iterable<Song> findAll() {
+        return songRepository.findAll();
+    }
+
+    @Override
+    public Page<Song> findAll(Pageable pageable, String sort) {
+        if (sort != null && sort.equals("releaseDate")) {
+            return songRepository.findAllByOrderByReleaseDateDesc(pageable);
+        } else if (sort != null && sort.equals("listeningFrequency")) {
+            return songRepository.findAllByOrderByListeningFrequencyDesc(pageable);
+        } else if (sort != null && sort.equals("likesCount")) {
+            return songRepository.findAllByOrderByUsers_Size(pageable);
+        } else {
+            return songRepository.findAll(pageable);
+        }
     }
 
     @Override
@@ -56,6 +69,13 @@ public class SongServiceImpl implements SongService {
     @Override
     public Page<Song> findAllByArtistsContains(Artist artist, Pageable pageable) {
         return songRepository.findAllByArtistsContains(artist, pageable);
+    }
+
+    @Override
+    public Iterable<Song> findTop10By(String sort) {
+        if (sort.equals("listeningFrequency")) {
+            return songRepository.findFirst10ByOrderByListeningFrequencyDesc();
+        } else return songRepository.findFirst10ByOrderByListeningFrequencyDesc();
     }
 
     @Override
