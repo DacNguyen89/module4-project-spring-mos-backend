@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface UserService {
     Optional<User> findByUsername(String username);
 
+    Iterable<User> findByUsernameContaining(String username);
+
     Page<User> findAll(Pageable pageable);
 
     Page<User> findByUsernameContaining(String username, Pageable pageable);

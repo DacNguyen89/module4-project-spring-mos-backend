@@ -39,6 +39,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Iterable<User> findByUsernameContaining(String username) {
+        return userRepository.findByUsernameContaining(username);
+    }
+
+    @Override
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
@@ -91,7 +96,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SearchResponse search(String searchText) {
-        Optional<User> users = userService.findByUsername(searchText);
+        Iterable<User> users = userService.findByUsernameContaining(searchText);
         Iterable<Artist> artists = artistService.findAllByNameContaining(searchText);
         return new SearchResponse(users, artists);
     }
