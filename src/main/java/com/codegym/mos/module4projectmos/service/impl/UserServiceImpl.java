@@ -20,22 +20,23 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     PasswordEncoder passwordEncoder;
-
     @Autowired
     SongService songService;
-
     @Autowired
     ArtistService artistService;
-
     @Autowired
     UserService userService;
 
     @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public Iterable<User> findByUsernameContaining(String username) {
+        return userRepository.findByUsernameContaining(username);
     }
 
     @Override
@@ -91,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SearchResponse search(String searchText) {
-        Optional<User> users = userService.findByUsername(searchText);
+        Iterable<User> users = userService.findByUsernameContaining(searchText);
         Iterable<Artist> artists = artistService.findAllByNameContaining(searchText);
         return new SearchResponse(users, artists);
     }
