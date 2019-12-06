@@ -216,10 +216,6 @@ public class UserApiController {
 
     @GetMapping(value = "/search", params = "name")
     public ResponseEntity<SearchResponse> search(@RequestParam("name") String name) {
-//        Iterable<Song> songs = songService.findAllByNameContaining(name);
-        Iterable<Artist> artists = artistService.findAllByNameContaining(name);
-//        SearchResponse searchResponse = new SearchResponse(songs, artists);
-//        return new ResponseEntity<>(searchResponse, HttpStatus.OK);
         SearchResponse searchResponse = userService.search(name);
         return new ResponseEntity<>(searchResponse, HttpStatus.OK);
     }
