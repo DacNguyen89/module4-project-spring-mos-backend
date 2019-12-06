@@ -52,13 +52,13 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public Optional<Song> findByName(String name) {
-        return songRepository.findByName(name);
+    public Optional<Song> findByTitle(String title) {
+        return songRepository.findByTitle(title);
     }
 
     @Override
-    public Iterable<Song> findAllByNameContaining(String name) {
-        return songRepository.findAllByNameContaining(name);
+    public Iterable<Song> findAllByTitleContaining(String title) {
+        return songRepository.findAllByTitleContaining(title);
     }
 
     @Override
