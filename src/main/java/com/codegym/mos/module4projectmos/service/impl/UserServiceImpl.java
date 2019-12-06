@@ -1,7 +1,12 @@
 package com.codegym.mos.module4projectmos.service.impl;
 
+import com.codegym.mos.module4projectmos.model.entity.Artist;
+import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.model.entity.User;
+import com.codegym.mos.module4projectmos.model.form.SearchResponse;
 import com.codegym.mos.module4projectmos.repository.UserRepository;
+import com.codegym.mos.module4projectmos.service.ArtistService;
+import com.codegym.mos.module4projectmos.service.SongService;
 import com.codegym.mos.module4projectmos.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +23,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    SongService songService;
+
+    @Autowired
+    ArtistService artistService;
 
     @Override
     public Optional<User> findByUsername(String username) {
@@ -73,5 +84,12 @@ public class UserServiceImpl implements UserService {
         if (!oldUserInfo.getPassword().equals(newUserInfo.getPassword())) {
             oldUserInfo.setPassword(passwordEncoder.encode(newUserInfo.getPassword()));
         }
+    }
+
+    @Override
+    public SearchResponse search(String searchText) {
+        Iterable<Song> songs = songService.findAllByTitleContaining(searchText);
+        Iterable<Artist> artists = artistService.findAllByNameContaining(searchText);
+        return new SearchResponse(songs, artists);
     }
 }
