@@ -22,6 +22,7 @@ import java.util.Date;
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"comments", "liked", "albums", "tags", "genres", "users", "playlists", "country", "theme", "uploader", "blobString"}, allowGetters = true, ignoreUnknown = true)
 public class Song extends MediaObject {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -38,10 +39,10 @@ public class Song extends MediaObject {
     private Collection<Comment> comments;
 
     @ColumnDefault("0")
-    private Long displayRating;
+    private Long displayRating = 0L;
 
     @ColumnDefault("0")
-    private Long listeningFrequency;
+    private Long listeningFrequency = 0L;
 
     private Boolean liked;
 
