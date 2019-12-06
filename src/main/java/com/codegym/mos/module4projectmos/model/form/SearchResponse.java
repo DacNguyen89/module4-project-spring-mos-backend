@@ -1,5 +1,4 @@
 package com.codegym.mos.module4projectmos.model.form;
-
 import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.User;
 import lombok.Data;
@@ -12,8 +11,5 @@ public class SearchResponse {
     public SearchResponse(Iterable<User> users, Iterable<Artist> artists) {
         this.users = users;
         this.artists = artists;
-    }
-
-    public SearchResponse() {
     }
 }

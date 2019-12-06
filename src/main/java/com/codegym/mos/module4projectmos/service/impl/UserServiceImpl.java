@@ -20,16 +20,12 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     PasswordEncoder passwordEncoder;
-
     @Autowired
     SongService songService;
-
     @Autowired
     ArtistService artistService;
-
     @Autowired
     UserService userService;
 
