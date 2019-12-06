@@ -30,6 +30,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     ArtistService artistService;
 
+    @Autowired
+    UserService userService;
+
     @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -88,8 +91,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SearchResponse search(String searchText) {
-        Iterable<Song> songs = songService.findAllByTitleContaining(searchText);
+        Optional<User> users = userService.findByUsername(searchText);
         Iterable<Artist> artists = artistService.findAllByNameContaining(searchText);
-        return new SearchResponse(songs, artists);
+        return new SearchResponse(users, artists);
     }
 }
