@@ -222,11 +222,9 @@ public class UserApiController {
 
     @GetMapping(value = "/search", params = "name")
     public ResponseEntity<SearchResponse> search(@RequestParam("name") String name) {
-        try {
-            SearchResponse searchResponse = userService.search(name);
-            return new ResponseEntity<>(searchResponse, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Iterable<Song> songs = songService.findAllByTitleContaining(name);
+        Iterable<Artist> artists = artistService.findAllByNameContaining(name);
+        SearchResponse searchResponse = new SearchResponse(songs, artists);
+        return new ResponseEntity<>(searchResponse, HttpStatus.OK);
     }
 }
