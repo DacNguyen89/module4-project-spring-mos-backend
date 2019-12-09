@@ -39,8 +39,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public Page<Playlist> findAllByNameContaining(String name, Pageable pageable) {
-        return playlistRepository.findAllByNameContaining(name, pageable);
+    public Iterable<Playlist> findAllByNameContaining(String name) {
+        return playlistRepository.findAllByNameContaining(name);
     }
 
     @Override
@@ -104,5 +104,15 @@ public class PlaylistServiceImpl implements PlaylistService {
         Optional<Song> song = songService.findById(songId);
         return song.map(value -> playlistRepository.findAllByUser_IdAndSongsNotContains(currentUser.getId(), value)).orElse(null);
 
+    }
+
+    @Override
+    public void setFieldsEdit(Playlist oldPlaylistInfo, Playlist newPlaylistInfo) {
+        oldPlaylistInfo.setName(newPlaylistInfo.getName());
+    }
+
+    @Override
+    public Page<Playlist> fillAll(Pageable pageable) {
+        return playlistRepository.findAll(pageable);
     }
 }

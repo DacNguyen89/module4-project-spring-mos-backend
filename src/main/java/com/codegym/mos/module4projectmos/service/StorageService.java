@@ -15,17 +15,18 @@ import com.google.common.collect.Lists;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.StorageClient;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,6 +35,9 @@ import java.util.Collection;
 import java.util.List;
 
 public abstract class StorageService<T> {
+    @Autowired
+    private Environment environment;
+
     @Autowired
     ArtistService artistService;
 
@@ -98,7 +102,7 @@ public abstract class StorageService<T> {
         } else return null;
     }
 
-    public void deleteOldFile(Path storageLocation, Object object, MultipartFile file) {
+/*    public void deleteOldFile(Path storageLocation, Object object, MultipartFile file) {
         String newExtension = getNewExtension(file);
         // check if new image ext is different from old file ext
         String url = "";
@@ -115,7 +119,7 @@ public abstract class StorageService<T> {
                 deleteLocalStorageFile(storageLocation, oldExtension);
             }
         }
-    }
+    }*/
 
     public Resource loadFileAsResource(Path storageLocation, String fileName) {
         try {
@@ -134,6 +138,10 @@ public abstract class StorageService<T> {
     private StorageClient getFirebaseStorage() {
         try {
             GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
+
+//            JSONObject jsonObject = new JSONObject(environment.getProperty("GOOGLE_KEY"));
+//            GoogleCredentials credentials = GoogleCredentials.fromStream(new ByteArrayInputStream(environment.getProperty("GOOGLE_KEY").getBytes()));
+
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(credentials)
                     .setDatabaseUrl("https://musikonthesea.firebaseio.com")

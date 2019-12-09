@@ -6,9 +6,11 @@ import com.codegym.mos.module4projectmos.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class AlbumServiceImpl implements AlbumService {
     @Autowired
     AlbumRepository albumRepository;
@@ -21,5 +23,10 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public Optional<Album> findById(Long id) {
         return albumRepository.findById(id);
+    }
+
+    @Override
+    public void save(Album album) {
+        albumRepository.saveAndFlush(album);
     }
 }

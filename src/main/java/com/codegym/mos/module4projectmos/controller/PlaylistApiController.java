@@ -1,8 +1,11 @@
 package com.codegym.mos.module4projectmos.controller;
 
 
+import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.Playlist;
+import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.model.entity.User;
+import com.codegym.mos.module4projectmos.model.form.SearchResponse;
 import com.codegym.mos.module4projectmos.service.PlaylistService;
 import com.codegym.mos.module4projectmos.service.impl.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,7 @@ import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Optional;
 
-@CrossOrigin("*")
+@CrossOrigin(origins = {"http://localhost:4200"}, allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/playlist")
 public class PlaylistApiController {
@@ -28,26 +31,21 @@ public class PlaylistApiController {
     @Autowired
     UserDetailServiceImpl userDetailService;
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/list")
     public ResponseEntity<Page<Playlist>> playlistList(Pageable pageable) {
-        User currentUser = userDetailService.getCurrentUser();
-        Long id = currentUser.getId();
-        Page<Playlist> playlistList = playlistService.findAllByUser_Id(id, pageable);
+        Page<Playlist> playlistList = playlistService.fillAll(pageable);
         boolean isEmpty = playlistList.getTotalElements() == 0;
         if (isEmpty) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else return new ResponseEntity<>(playlistList, HttpStatus.OK);
     }
 
-    @PreAuthorize("isAuthenticated()")
+
     @GetMapping(value = "/detail", params = "id")
     public ResponseEntity<Playlist> playlistDetail(@RequestParam("id") Long id) {
         Optional<Playlist> playlist = playlistService.findById(id);
         if (playlist.isPresent()) {
-            if (playlistService.checkPlaylistOwner(id)) {
                 return new ResponseEntity<>(playlist.get(), HttpStatus.OK);
-            } else return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -71,8 +69,6 @@ public class PlaylistApiController {
             if (playlistService.checkPlaylistOwner(id)) {
                 playlist.setId(id);
                 playlist.setUser(userDetailService.getCurrentUser());
-                playlist.setName(oldPlaylist.get().getName());
-                playlist.setSongs(oldPlaylist.get().getSongs());
                 playlistService.save(playlist);
                 return new ResponseEntity<>(HttpStatus.OK);
             } else return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -122,4 +118,19 @@ public class PlaylistApiController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else return new ResponseEntity<>(filteredPlaylistList, HttpStatus.OK);
     }
+
+
+    @GetMapping(value = "/search", params = "name")
+    public ResponseEntity<Iterable<Playlist>> playListByName(@RequestParam("name") String name) {
+        Iterable<Playlist> playlists = playlistService.findAllByNameContaining(name);
+        int listSize = 0;
+        if (playlists instanceof Collection) {
+            listSize = ((Collection<?>) playlists).size();
+        }
+        if (listSize == 0) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(playlists, HttpStatus.OK);
+    }
+
 }
