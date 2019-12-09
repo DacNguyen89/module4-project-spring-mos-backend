@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +30,7 @@ public class ArtistApiController {
 
     AvatarStorageService avatarStorageService;
 
+    @PreAuthorize("permitAll()")
     @PostMapping(value = "/create")
     public ResponseEntity<Void> createArtist(@RequestPart("artist") Artist artist, @RequestPart("avatar") MultipartFile multipartFile) {
         artistService.save(artist);
@@ -38,6 +40,7 @@ public class ArtistApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/search", params = "name")
     public ResponseEntity<Iterable<Artist>> searchArtistByName(@RequestParam("name") String name) {
         Iterable<Artist> artistList = artistService.findTop10ByNameContaining(name);
@@ -50,6 +53,7 @@ public class ArtistApiController {
         } else return new ResponseEntity<>(artistList, HttpStatus.OK);
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/list")
     public ResponseEntity<Page<Artist>> getArtistList(Pageable pageable) {
         Page<Artist> artistList = artistService.findAll(pageable);
@@ -59,6 +63,7 @@ public class ArtistApiController {
         return new ResponseEntity<>(artistList, HttpStatus.OK);
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/song-list", params = "artist-id")
     public ResponseEntity<Page<Song>> getSongListOfArtist(@RequestParam("artist-id") Long id, @PageableDefault(size = 5) Pageable pageable) {
         Optional<Artist> artist = artistService.findById(id);
@@ -70,5 +75,12 @@ public class ArtistApiController {
             }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping(value = "/detail", params = "id")
+    public ResponseEntity<Artist> artistDetail(@RequestParam("id") Long id) {
+        Optional<Artist> artist = artistService.findById(id);
+        return artist.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 }
