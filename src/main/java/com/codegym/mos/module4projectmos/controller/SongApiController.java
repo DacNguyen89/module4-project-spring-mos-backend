@@ -66,6 +66,7 @@ public class SongApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }*/
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/upload")
     public ResponseEntity<String> uploadSong(@RequestPart("song") Song song, @RequestPart("audio") MultipartFile file, @RequestParam(value = "album-id", required = false) Long id) {
         try {

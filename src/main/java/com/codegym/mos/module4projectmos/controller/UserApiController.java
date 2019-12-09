@@ -183,15 +183,21 @@ public class UserApiController {
         } else return new ResponseEntity<>("Not found user with the given id in database!", HttpStatus.NOT_FOUND);
     }*/
 
-    @PostMapping("/avatar")
-    public ResponseEntity<String> uploadAvatar(@RequestPart("avatar") MultipartFile avatar, @RequestPart("id") String id) {
-        Optional<User> user = userService.findById(Long.parseLong(id));
-        if (user.isPresent()) {
-            String fileDownloadUri = avatarStorageService.saveToFirebaseStorage(user.get(), avatar);
-            user.get().setAvatarUrl(fileDownloadUri);
-            userService.save(user.get());
-            return new ResponseEntity<>("User's avatar uploaded successfully", HttpStatus.OK);
-        } else return new ResponseEntity<>("Not found user with the given id in database!", HttpStatus.NOT_FOUND);
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/upload-avatar")
+    public ResponseEntity<String> uploadAvatar(@RequestParam("avatar") MultipartFile multipartFile) {
+        try {
+            User currentUser = userDetailService.getCurrentUser();
+            if (multipartFile != null) {
+                String fileDownloadUri = avatarStorageService.saveToFirebaseStorage(currentUser, multipartFile);
+                currentUser.setAvatarUrl(fileDownloadUri);
+            }
+            userService.save(currentUser);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            String error = e.getMessage();
+            return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /*@PutMapping("/profile")
@@ -216,7 +222,11 @@ public class UserApiController {
 
     @GetMapping(value = "/search", params = "name")
     public ResponseEntity<SearchResponse> search(@RequestParam("name") String name) {
-        SearchResponse searchResponse = userService.search(name);
-        return new ResponseEntity<>(searchResponse, HttpStatus.OK);
+        try {
+            SearchResponse searchResponse = userService.search(name);
+            return new ResponseEntity<>(searchResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
