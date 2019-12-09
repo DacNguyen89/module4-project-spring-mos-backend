@@ -22,12 +22,13 @@ import java.util.Date;
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"comments", "liked", "albums", "tags", "genres", "users", "playlists", "country", "theme", "uploader", "blobString"}, allowGetters = true, ignoreUnknown = true)
 public class Song extends MediaObject {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotBlank
-    private String name;
+    private String title;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;
@@ -38,10 +39,10 @@ public class Song extends MediaObject {
     private Collection<Comment> comments;
 
     @ColumnDefault("0")
-    private Long displayRating;
+    private Long displayRating = 0L;
 
     @ColumnDefault("0")
-    private Long listeningFrequency;
+    private Long listeningFrequency = 0L;
 
     private Boolean liked;
 
@@ -109,7 +110,7 @@ public class Song extends MediaObject {
     private Theme theme;
 
     public Song(String name, Date releaseDate) {
-        this.name = name;
+        this.title = name;
         this.releaseDate = releaseDate;
     }
 
@@ -117,7 +118,7 @@ public class Song extends MediaObject {
     public String toString() {
         return "Song{" +
                 "id=" + id +
-                ", title='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", url='" + url + '\'' +
                 '}';

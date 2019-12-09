@@ -1,7 +1,12 @@
 package com.codegym.mos.module4projectmos.service.impl;
 
+import com.codegym.mos.module4projectmos.model.entity.Artist;
+import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.model.entity.User;
+import com.codegym.mos.module4projectmos.model.form.SearchResponse;
 import com.codegym.mos.module4projectmos.repository.UserRepository;
+import com.codegym.mos.module4projectmos.service.ArtistService;
+import com.codegym.mos.module4projectmos.service.SongService;
 import com.codegym.mos.module4projectmos.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,13 +20,23 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    SongService songService;
+    @Autowired
+    ArtistService artistService;
+    @Autowired
+    UserService userService;
 
     @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public Iterable<User> findByUsernameContaining(String username) {
+        return userRepository.findByUsernameContaining(username);
     }
 
     @Override
@@ -73,5 +88,12 @@ public class UserServiceImpl implements UserService {
         if (!oldUserInfo.getPassword().equals(newUserInfo.getPassword())) {
             oldUserInfo.setPassword(passwordEncoder.encode(newUserInfo.getPassword()));
         }
+    }
+
+    @Override
+    public SearchResponse search(String searchText) {
+        Iterable<User> users = userService.findByUsernameContaining(searchText);
+        Iterable<Artist> artists = artistService.findAllByNameContaining(searchText);
+        return new SearchResponse(users, artists);
     }
 }
