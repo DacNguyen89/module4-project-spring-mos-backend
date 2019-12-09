@@ -22,7 +22,6 @@ import java.util.Date;
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"comments", "liked", "albums", "tags", "genres", "users", "playlists", "country", "theme", "uploader", "blobString"}, allowGetters = true, ignoreUnknown = true)
 public class Song extends MediaObject {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -109,8 +108,8 @@ public class Song extends MediaObject {
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
-    public Song(String name, Date releaseDate) {
-        this.title = name;
+    public Song(String title, Date releaseDate) {
+        this.title = title;
         this.releaseDate = releaseDate;
     }
 

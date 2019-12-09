@@ -92,8 +92,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SearchResponse search(String searchText) {
-        Iterable<User> users = userService.findByUsernameContaining(searchText);
+        Iterable<Song> songs = songService.findAllByTitleContaining(searchText);
         Iterable<Artist> artists = artistService.findAllByNameContaining(searchText);
-        return new SearchResponse(users, artists);
+        return new SearchResponse(songs, artists);
     }
 }

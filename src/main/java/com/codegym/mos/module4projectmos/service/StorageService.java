@@ -63,7 +63,7 @@ public abstract class StorageService<T> {
             String oldExtension = getOldExtension(url);
             Collection<Artist> artists = song.getArtists();
             String artistsString = artistService.convertToString(artists);
-            return song.getId().toString().concat(" - ").concat(song.getName()).concat(artistsString).concat(".").concat(oldExtension);
+            return song.getId().toString().concat(" - ").concat(song.getTitle()).concat(artistsString).concat(".").concat(oldExtension);
         } else if (object instanceof Album) {
             Album album = (Album) object;
             String url = album.getCoverUrl();
@@ -89,7 +89,7 @@ public abstract class StorageService<T> {
                 Song song = (Song) object;
                 artists = song.getArtists();
                 artistsString = artistService.convertToString(artists);
-                return StringUtils.cleanPath(song.getId().toString().concat(" - ").concat(song.getName()).concat(artistsString).concat(".").concat(extension));
+                return StringUtils.cleanPath(song.getId().toString().concat(" - ").concat(song.getTitle()).concat(artistsString).concat(".").concat(extension));
             } else if (object instanceof Album) {
                 Album album = (Album) object;
                 artists = album.getArtists();
