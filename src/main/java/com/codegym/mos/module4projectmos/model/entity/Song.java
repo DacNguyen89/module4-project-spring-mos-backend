@@ -27,7 +27,7 @@ public class Song extends MediaObject {
     private Long id;
 
     @NotBlank
-    private String name;
+    private String title;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;
@@ -38,10 +38,10 @@ public class Song extends MediaObject {
     private Collection<Comment> comments;
 
     @ColumnDefault("0")
-    private Long displayRating;
+    private Long displayRating = 0L;
 
     @ColumnDefault("0")
-    private Long listeningFrequency;
+    private Long listeningFrequency = 0L;
 
     private Boolean liked;
 
@@ -108,8 +108,8 @@ public class Song extends MediaObject {
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
-    public Song(String name, Date releaseDate) {
-        this.name = name;
+    public Song(String title, Date releaseDate) {
+        this.title = title;
         this.releaseDate = releaseDate;
     }
 
@@ -117,7 +117,7 @@ public class Song extends MediaObject {
     public String toString() {
         return "Song{" +
                 "id=" + id +
-                ", title='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", url='" + url + '\'' +
                 '}';

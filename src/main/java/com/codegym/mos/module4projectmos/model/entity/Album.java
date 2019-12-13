@@ -23,7 +23,7 @@ public class Album extends MediaObject {
     private Long id;
 
     @NotBlank
-    private String name;
+    private String title;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;
@@ -89,8 +89,8 @@ public class Album extends MediaObject {
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<User> users;
 
-    public Album(String name, Date releaseDate) {
-        this.name = name;
+    public Album(String title, Date releaseDate) {
+        this.title = title;
         this.releaseDate = releaseDate;
     }
 
@@ -98,7 +98,7 @@ public class Album extends MediaObject {
     public String toString() {
         return "Album{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + title + '\'' +
                 ", releaseDate=" + releaseDate +
                 '}';
     }
