@@ -3,6 +3,7 @@ package com.codegym.mos.module4projectmos.model.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -12,8 +13,8 @@ import java.util.Collection;
 
 @Entity
 @Data
+@NoArgsConstructor
 @JsonIgnoreProperties(value = "roles", allowGetters = true)
-@Table(name = "privilege")
 public class Privilege {
 
     @Id
@@ -28,9 +29,6 @@ public class Privilege {
     @ManyToMany(mappedBy = "privileges", fetch = FetchType.LAZY)
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<Role> roles;
-
-    public Privilege() {
-    }
 
     public Privilege(String name) {
         this.name = name;

@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 
 @Service
 public class AvatarStorageService extends StorageService<User> {
-    final Path avatarStorageLocation;
+/*    final Path avatarStorageLocation;
 
     @Autowired
     public AvatarStorageService(AvatarStorageProperties avatarStorageLocation) {
@@ -25,6 +25,6 @@ public class AvatarStorageService extends StorageService<User> {
         } catch (Exception ex) {
             throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
         }
-    }
+    }*/
 }
 

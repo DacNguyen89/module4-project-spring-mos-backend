@@ -3,11 +3,9 @@ package com.codegym.mos.module4projectmos.model.entity;
 import com.codegym.mos.module4projectmos.model.util.MediaObject;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -29,7 +27,7 @@ public class Song extends MediaObject {
     private Long id;
 
     @NotBlank
-    private String name;
+    private String title;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;
@@ -40,10 +38,10 @@ public class Song extends MediaObject {
     private Collection<Comment> comments;
 
     @ColumnDefault("0")
-    private Long displayRating;
+    private Long displayRating = 0L;
 
     @ColumnDefault("0")
-    private Long listeningFrequency;
+    private Long listeningFrequency = 0L;
 
     private Boolean liked;
 
@@ -53,7 +51,7 @@ public class Song extends MediaObject {
 
     private String blobString;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "song_artist",
             joinColumns = @JoinColumn(
@@ -101,17 +99,17 @@ public class Song extends MediaObject {
     private Collection<Playlist> playlists;
 
     @JsonBackReference("song-country")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "country_id")
     private Country country;
 
     @JsonBackReference("song-theme")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
-    public Song(String name, Date releaseDate) {
-        this.name = name;
+    public Song(String title, Date releaseDate) {
+        this.title = title;
         this.releaseDate = releaseDate;
     }
 
@@ -119,7 +117,7 @@ public class Song extends MediaObject {
     public String toString() {
         return "Song{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", url='" + url + '\'' +
                 '}';

@@ -1,12 +1,17 @@
 package com.codegym.mos.module4projectmos.controller;
 
+import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.Role;
+import com.codegym.mos.module4projectmos.model.entity.Song;
 import com.codegym.mos.module4projectmos.model.entity.User;
+import com.codegym.mos.module4projectmos.model.form.SearchResponse;
 import com.codegym.mos.module4projectmos.model.form.UserForm;
 import com.codegym.mos.module4projectmos.model.util.CustomUserDetails;
 import com.codegym.mos.module4projectmos.model.util.LoginRequest;
 import com.codegym.mos.module4projectmos.model.util.LoginResponse;
 import com.codegym.mos.module4projectmos.repository.RoleRepository;
+import com.codegym.mos.module4projectmos.service.ArtistService;
+import com.codegym.mos.module4projectmos.service.SongService;
 import com.codegym.mos.module4projectmos.service.UserService;
 import com.codegym.mos.module4projectmos.service.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +57,12 @@ public class UserApiController {
 
     @Autowired
     private DownloadService downloadService;
+
+    @Autowired
+    private SongService songService;
+
+    @Autowired
+    private ArtistService artistService;
 
     /*@GetMapping(value = "/api/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -172,15 +183,21 @@ public class UserApiController {
         } else return new ResponseEntity<>("Not found user with the given id in database!", HttpStatus.NOT_FOUND);
     }*/
 
-    @PostMapping("/avatar")
-    public ResponseEntity<String> uploadAvatar(@RequestPart("avatar") MultipartFile avatar, @RequestPart("id") String id) {
-        Optional<User> user = userService.findById(Long.parseLong(id));
-        if (user.isPresent()) {
-            String fileDownloadUri = avatarStorageService.saveToFirebaseStorage(user.get(), avatar);
-            user.get().setAvatarUrl(fileDownloadUri);
-            userService.save(user.get());
-            return new ResponseEntity<>("User's avatar uploaded successfully", HttpStatus.OK);
-        } else return new ResponseEntity<>("Not found user with the given id in database!", HttpStatus.NOT_FOUND);
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/upload-avatar")
+    public ResponseEntity<String> uploadAvatar(@RequestParam("avatar") MultipartFile multipartFile) {
+        try {
+            User currentUser = userDetailService.getCurrentUser();
+            if (multipartFile != null) {
+                String fileDownloadUri = avatarStorageService.saveToFirebaseStorage(currentUser, multipartFile);
+                currentUser.setAvatarUrl(fileDownloadUri);
+            }
+            userService.save(currentUser);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            String error = e.getMessage();
+            return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /*@PutMapping("/profile")
@@ -201,5 +218,13 @@ public class UserApiController {
     @GetMapping("/avatar/{fileName:.+}")
     public ResponseEntity<Resource> getAvatar(@PathVariable("fileName") String fileName, HttpServletRequest request) {
         return downloadService.generateUrl(fileName, request, avatarStorageService);
+    }
+
+    @GetMapping(value = "/search", params = "name")
+    public ResponseEntity<SearchResponse> search(@RequestParam("name") String name) {
+        Iterable<Song> songs = songService.findAllByTitleContaining(name);
+        Iterable<Artist> artists = artistService.findAllByNameContaining(name);
+        SearchResponse searchResponse = new SearchResponse(songs, artists);
+        return new ResponseEntity<>(searchResponse, HttpStatus.OK);
     }
 }
