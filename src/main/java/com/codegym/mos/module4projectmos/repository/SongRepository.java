@@ -18,6 +18,7 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     Page<Song> findAll(Pageable pageable);
 
     //@Query("SELECT s, ar, c, t from Song s JOIN FETCH s.artists ar JOIN FETCH s.country c JOIN FETCH s.theme t WHERE s.id=:id")
+    @Query("SELECT s from Song s LEFT JOIN FETCH s.comments c WHERE s.id=:id")
     Optional<Song> findById(@Param("id") Long id);
 
     @Query(value = "SELECT * FROM song WHERE BINARY title=:title", nativeQuery = true)

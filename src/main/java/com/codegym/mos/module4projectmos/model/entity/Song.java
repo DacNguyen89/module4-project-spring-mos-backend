@@ -34,7 +34,7 @@ public class Song extends MediaObject {
 
     private String url;
 
-    @OneToMany(mappedBy = "song", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "song", fetch = FetchType.LAZY)
     private Collection<Comment> comments;
 
     @ColumnDefault("0")
