@@ -28,7 +28,11 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     Page<Song> findAllByArtistsContains(Artist artist, Pageable pageable);
 
-    Iterable<Song> findAllByTitleContaining(@Param("title") String title);
+    Iterable<Song> findAllByTitleContainingIgnoreCase(String title);
+
+    //    @Query(nativeQuery = true, value = "SELECT * FROM public.song "
+//            + "WHERE LOWER(unaccent(title)) LIKE LOWER(unaccent(:title))||'%'")
+    Iterable<Song> findAllByUnaccentTitleContainingIgnoreCase(String title);
 
     Page<Song> findAllByUsersContains(User user, Pageable pageable);
 

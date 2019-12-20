@@ -2,6 +2,7 @@ package com.codegym.mos.module4projectmos.model.entity;
 
 import com.codegym.mos.module4projectmos.model.util.MediaObject;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,6 +29,9 @@ public class Song extends MediaObject {
 
     @NotBlank
     private String title;
+
+    @JsonIgnore
+    private String unaccentTitle;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;

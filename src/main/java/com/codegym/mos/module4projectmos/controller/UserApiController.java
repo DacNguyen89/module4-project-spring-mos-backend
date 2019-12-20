@@ -138,14 +138,18 @@ public class UserApiController {
     @PreAuthorize("isAnonymous()")
     @PostMapping(value = "/register")
     public ResponseEntity<Void> createUser(@Valid @RequestBody UserForm userForm) {
-        User user = formConvertService.convertToUser(userForm, true);
-        if (user == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        Role role = roleRepository.findByName(DEFAULT_ROLE);
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
-        userService.save(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            User user = formConvertService.convertToUser(userForm, true);
+            if (user == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            Role role = roleRepository.findByName(DEFAULT_ROLE);
+            Set<Role> roles = new HashSet<>();
+            roles.add(role);
+            user.setRoles(roles);
+            userService.save(user);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -198,6 +202,7 @@ public class UserApiController {
         } catch (Exception e) {
             String error = e.getMessage();
             return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+            //return new ResponseEntity<>(e.getCause().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -223,10 +228,11 @@ public class UserApiController {
 
     @GetMapping(value = "/search", params = "name")
     public ResponseEntity<SearchResponse> search(@RequestParam("name") String name) {
-        Iterable<Song> songs = songService.findAllByTitleContaining(name);
-        Iterable<Artist> artists = artistService.findAllByNameContaining(name);
-        Iterable<Playlist> playlists = playlistService.findAllByNameContaining(name);
-        SearchResponse searchResponse = new SearchResponse(songs, artists, playlists);
-        return new ResponseEntity<>(searchResponse, HttpStatus.OK);
+        try {
+            SearchResponse searchResponse = userService.search(name);
+            return new ResponseEntity<>(searchResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

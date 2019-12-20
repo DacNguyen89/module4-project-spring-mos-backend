@@ -16,13 +16,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication(scanBasePackages = "com.codegym.mos.module4projectmos")
+@ComponentScan(basePackages = "com.codegym")
 @EntityScan("com.codegym.mos.module4projectmos.model")
+@EnableJpaRepositories(basePackages = {"com.codegym.mos.module4projectmos.repository"})
 public class Module4ProjectMosApplication extends SpringBootServletInitializer {
-
-
-    @Autowired
-    DataSeedingListener dataSeedingListener;
-
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder applicationBuilder) {
         return applicationBuilder.sources(Module4ProjectMosApplication.class);
@@ -32,8 +29,8 @@ public class Module4ProjectMosApplication extends SpringBootServletInitializer {
         SpringApplication.run(Module4ProjectMosApplication.class, args);
     }
 
-    @EventListener(ContextRefreshedEvent.class)
+    /*@EventListener(ContextRefreshedEvent.class)
     public void dataSeeding() {
         dataSeedingListener.onApplicationEvent();
-    }
+    }*/
 }

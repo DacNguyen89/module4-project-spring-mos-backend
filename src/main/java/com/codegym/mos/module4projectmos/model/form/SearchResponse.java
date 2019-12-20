@@ -16,6 +16,11 @@ public class SearchResponse {
         this.playlists = playlists;
     }
 
+    public SearchResponse(Iterable<Song> songs, Iterable<Artist> artists) {
+        this.songs = songs;
+        this.artists = artists;
+    }
+
     public SearchResponse() {
     }
 }

@@ -1,5 +1,6 @@
 package com.codegym.mos.module4projectmos.service.impl;
 
+import com.codegym.mos.module4projectmos.formatter.StringAccentRemover;
 import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.repository.ArtistRepository;
 import com.codegym.mos.module4projectmos.service.ArtistService;
@@ -23,17 +24,27 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     public void save(Artist artist) {
+        String unaccentName = StringAccentRemover.removeStringAccent(artist.getName());
+        artist.setUnaccentName(unaccentName.toLowerCase());
         artistRepository.saveAndFlush(artist);
     }
 
     @Override
     public Iterable<Artist> findAllByNameContaining(String name) {
-        return artistRepository.findAllByNameContaining(name);
+        if (name.equals(StringAccentRemover.removeStringAccent(name))) {
+            return artistRepository.findAllByUnaccentNameContainingIgnoreCase(name);
+        } else {
+            return artistRepository.findAllByNameContainingIgnoreCase(name);
+        }
     }
 
     @Override
     public Iterable<Artist> findTop10ByNameContaining(String name) {
-        return artistRepository.findFirst10ByNameContaining(name);
+        if (name.equals(StringAccentRemover.removeStringAccent(name))) {
+            return artistRepository.findFirst10ByUnaccentNameContainingIgnoreCase(name);
+        } else {
+            return artistRepository.findFirst10ByNameContainingIgnoreCase(name);
+        }
     }
 
     @Override

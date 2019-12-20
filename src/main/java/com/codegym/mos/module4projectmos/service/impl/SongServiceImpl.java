@@ -1,5 +1,6 @@
 package com.codegym.mos.module4projectmos.service.impl;
 
+import com.codegym.mos.module4projectmos.formatter.StringAccentRemover;
 import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.Like;
 import com.codegym.mos.module4projectmos.model.entity.Song;
@@ -58,7 +59,12 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public Iterable<Song> findAllByTitleContaining(String title) {
-        return songRepository.findAllByTitleContaining(title);
+        if (title.equals(StringAccentRemover.removeStringAccent(title))) {
+            return songRepository.findAllByUnaccentTitleContainingIgnoreCase(title);
+        } else {
+            return songRepository.findAllByTitleContainingIgnoreCase(title);
+        }
+
     }
 
     @Override
@@ -80,6 +86,8 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public Song save(Song song) {
+        String unaccentTitle = StringAccentRemover.removeStringAccent(song.getTitle());
+        song.setUnaccentTitle(unaccentTitle);
         songRepository.saveAndFlush(song);
         return song;
     }
