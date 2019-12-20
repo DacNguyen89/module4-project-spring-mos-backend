@@ -1,9 +1,11 @@
 package com.codegym.mos.module4projectmos.model.entity;
 
+import com.codegym.mos.module4projectmos.model.util.CustomUserJsonSerializer;
 import com.codegym.mos.module4projectmos.model.util.MediaObject;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -93,7 +95,8 @@ public class Song extends MediaObject {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "favoriteSongs")
     private Collection<User> users;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonSerialize(using = CustomUserJsonSerializer.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User uploader;
 
