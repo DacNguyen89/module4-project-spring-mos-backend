@@ -11,9 +11,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.web.config.EnableSpringDataWebSupport;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication(scanBasePackages = "com.codegym.mos.module4projectmos")
 @ComponentScan(basePackages = "com.codegym")
@@ -27,6 +24,14 @@ public class Module4ProjectMosApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(Module4ProjectMosApplication.class, args);
+    }
+
+    @Autowired
+    DataSeedingListener dataSeedingListener;
+
+    @EventListener(ContextRefreshedEvent.class)
+    public void dataSeeding() {
+        dataSeedingListener.onApplicationEvent();
     }
 
     /*@EventListener(ContextRefreshedEvent.class)
