@@ -1,11 +1,6 @@
 package com.codegym.mos.module4projectmos.controller;
 
-
-import com.codegym.mos.module4projectmos.model.entity.Artist;
 import com.codegym.mos.module4projectmos.model.entity.Playlist;
-import com.codegym.mos.module4projectmos.model.entity.Song;
-import com.codegym.mos.module4projectmos.model.entity.User;
-import com.codegym.mos.module4projectmos.model.form.SearchResponse;
 import com.codegym.mos.module4projectmos.service.PlaylistService;
 import com.codegym.mos.module4projectmos.service.impl.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
