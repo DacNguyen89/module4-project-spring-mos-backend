@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -38,6 +39,7 @@ public class Song extends MediaObject {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;
 
+    @Length(max = 855)
     private String url;
 
     @OneToMany(mappedBy = "song", fetch = FetchType.LAZY)
